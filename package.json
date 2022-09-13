@@ -1,0 +1,23 @@
+{
+  "name": "nlw-esports",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "fellipeutaka <fellipeutaka@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
+  },
+  "scripts": {
+    "server": "yarn workspace @nlw-esports/server",
+    "web": "yarn workspace @nlw-esports/web",
+    "mobile": "yarn workspace @nlw-esports/mobile",
+    "lint": "eslint . --ext ts,tsx"
+  },
+  "devDependencies": {
+    "@nlw-esports/eslint-config": "*",
+    "typescript": "^4.8.3"
+  }
+}
