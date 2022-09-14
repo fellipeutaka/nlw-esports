@@ -145,7 +145,7 @@ Made with ♥ by Fellipe Utaka 👋 [Get in touch!](https://www.linkedin.com/in/
 [figma]: https://www.figma.com/file/WNtF2d8WEh69bddiJHwYiV/NLW-eSports-(Community)?node-id=6%3A23
 [node]: https://nodejs.org/
 [ts]: https://www.typescriptlang.org/
-[expo]: https://expo.io/
+[expo]: https://expo.dev/
 [react]: https://reactjs.org
 [rn]: https://reactnative.dev/
 [yarn]: https://yarnpkg.com/
