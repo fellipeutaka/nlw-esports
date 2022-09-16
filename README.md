@@ -49,9 +49,9 @@ An online and completely free event that will help you take the next step in you
   - Building the web and mobile interface.
 - Stage 3: To be continued - ✔️
   - Building the back-end.
-- Stage 4: Power Up - ⌛
+- Stage 4: Power Up - ✔️
+  - Consuming backend's API RESTFul on Web and Mobile app.
 - Stage 5: Final Round - ⌛
-- Stage 6: The Next Level - ⌛
 
 ## 💻 Project
 
@@ -67,9 +67,14 @@ This project was developed with the following technologies:
 
 - [TypeScript][ts]
 - [Node.js][node]
+- [Prisma][prisma]
+- [MongoDB][mongodb]
 - [React][react]
+- [Next.js][next]
+- [TailwindCSS][tailwind]
 - [React Native][rn]
 - [Expo][expo]
+- [styled-components][styled-components]
 
 ## 🔖 Layout
 
@@ -87,11 +92,17 @@ From your command line:
 # Clone this repository
 $ git clone https://github.com/fellipeutaka/nlw-esports.git
 
+# Navigate to directory
+$ cd server
+
 # Install dependencies
 $ yarn
 
+# Generate Prisma Client types
+$ yarn prisma generate
+
 # Start server
-$ yarn server dev
+$ yarn dev
 
 # running on port 3333
 ```
@@ -105,10 +116,13 @@ $ git clone https://github.com/fellipeutaka/nlw-esports.git
 # Install dependencies
 $ yarn
 
-# Start server
-$ yarn web dev
+# Navigate to directory
+$ cd web
 
-# running on port 5173
+# Start server
+$ yarn dev
+
+# running on port 3000
 ```
 
 ### Install Mobile
@@ -117,11 +131,14 @@ $ yarn web dev
 # Clone this repository
 $ git clone https://github.com/fellipeutaka/nlw-esports.git
 
+# Navigate to directory
+$ cd mobile
+
 # Install dependencies
 $ yarn
 
 # Run
-$ yarn mobile dev
+$ yarn dev
 
 # Expo will open, just scan the QR Code on terminal or expo page
 ```
@@ -144,8 +161,13 @@ Made with ♥ by Fellipe Utaka 👋 [Get in touch!](https://www.linkedin.com/in/
 
 [figma]: https://www.figma.com/file/WNtF2d8WEh69bddiJHwYiV/NLW-eSports-(Community)?node-id=6%3A23
 [node]: https://nodejs.org/
+[prisma]: https://www.prisma.io/
+[mongodb]: https://www.mongodb.com/
 [ts]: https://www.typescriptlang.org/
 [expo]: https://expo.dev/
 [react]: https://reactjs.org
+[next]: https://nextjs.org/
+[tailwind]: https://tailwindcss.com/
 [rn]: https://reactnative.dev/
+[styled-components]: https://styled-components.com/
 [yarn]: https://yarnpkg.com/

@@ -1,0 +1,40 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "node": true
+  },
+  "extends": ["next/core-web-vitals", "prettier"],
+  "plugins": ["prettier", "import-helpers"],
+  "rules": {
+    "quotes": ["warn", "double"],
+    "semi": ["warn", "always"],
+    "arrow-parens": ["warn", "always"],
+    "no-unused-vars": "warn",
+    "react/react-in-jsx-scope": "off",
+    "import-helpers/order-imports": [
+      "warn",
+      {
+        "newlinesBetween": "always",
+        "groups": [
+          "/^react/",
+          "module",
+          [
+            "/^@components/",
+            "/^@screens/",
+            "/^@routes/",
+            "/^@types/",
+            "/^@contexts/",
+            "/^@hooks/",
+            "/^@theme/",
+            "/^@utils/",
+            "/^@lib/",
+            "/^@assets/"
+          ],
+          ["parent", "sibling", "index"]
+        ],
+        "alphabetize": { "order": "asc", "ignoreCase": true }
+      }
+    ]
+  }
+}

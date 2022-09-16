@@ -1,0 +1,23 @@
+.rgb {
+  @apply bg-[#2A2634] px-8 py-6 self-stretch mt-8 rounded-lg flex justify-between items-center relative;
+}
+
+.rgb::before,
+.rgb::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: -1;
+  width: calc(100% + 0.75rem);
+  height: calc(100% + 0.75rem);
+  background-size: 300%;
+  background-position: 0;
+  background-repeat: no-repeat;
+  @apply bg-rgb-gradient rounded-lg animate-rgb;
+}
+
+.rgb::after {
+  filter: blur(3rem);
+}
