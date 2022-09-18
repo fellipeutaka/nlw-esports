@@ -1,6 +1,6 @@
 {
   "functions": {
-    "api/*.ts": {
+    "src/*.ts": {
       "memory": 1024,
       "maxDuration": 10,
       "runtime": "@vercel/node@2.5.14"
