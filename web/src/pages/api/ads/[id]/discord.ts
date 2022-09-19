@@ -6,18 +6,19 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  const adId = req.query.id;
   if (req.method === "GET") {
-    const games = await prisma.game.findMany({
-      include: {
-        _count: {
-          select: {
-            ads: true,
-          },
-        },
+    const { discord } = await prisma.ad.findUniqueOrThrow({
+      select: {
+        discord: true,
+      },
+      where: {
+        id: String(adId),
       },
     });
+
     return res.status(200).json({
-      data: games,
+      data: discord,
     });
   }
   return res.status(405).json({ message: "Invalid method" });

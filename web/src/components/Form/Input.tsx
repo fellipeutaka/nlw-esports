@@ -1,10 +1,8 @@
 import { HTMLProps } from "react";
 
-interface InputProps extends HTMLProps<HTMLInputElement> {}
+type InputProps = HTMLProps<HTMLInputElement>;
 
 export function Input(props: InputProps) {
-  console.log(props.className);
-
   return (
     <input
       {...props}

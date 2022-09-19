@@ -1,0 +1,12 @@
+.content {
+  @apply overflow-hidden bg-zinc-900 rounded-lg;
+}
+
+.item {
+  all: unset;
+  @apply text-sm rounded flex  items-center relative h-8 px-6 select-none;
+}
+
+.item[data-highlighted] {
+  @apply bg-violet-500;
+}

@@ -1,7 +1,0 @@
-*/.js
-*.js
-node_modules
-.expo
-.expo-shared
-build
-dist

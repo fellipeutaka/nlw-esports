@@ -1,5 +1,5 @@
 .rgb {
-  @apply bg-[#2A2634] px-8 py-6 self-stretch mt-8 rounded-lg flex justify-between items-center relative;
+  @apply bg-[#2A2634] px-8 py-6 self-stretch mt-8 rounded-lg flex justify-between items-center relative sm:flex-row flex-col sm:gap-0 gap-6 mx-4;
 }
 
 .rgb::before,
@@ -19,5 +19,5 @@
 }
 
 .rgb::after {
-  filter: blur(3rem);
+  filter: blur(2rem);
 }
