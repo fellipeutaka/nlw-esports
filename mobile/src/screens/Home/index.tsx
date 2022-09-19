@@ -2,13 +2,13 @@ import { useEffect, useState } from "react";
 import { ToastAndroid } from "react-native";
 
 import { Game } from "@@types/Game";
-import axios from "axios";
 
 import logoImg from "@assets/logo-nlw-esports.png";
 import { Background } from "@components/Background";
 import { GameCard } from "@components/GameCard";
 import { Heading } from "@components/Heading";
 import { useAppNavigation } from "@hooks/useAppNavigation";
+import { api } from "@lib/axios";
 import { ActivityIndicator } from "@screens/Loading/styles";
 
 import { Container, GameList, Logo } from "./styles";
@@ -19,8 +19,8 @@ export function Home() {
   const navigation = useAppNavigation();
 
   useEffect(() => {
-    axios
-      .get("http://192.168.0.12:3333/games")
+    api
+      .get("/games")
       .then(({ data: { data } }) => setGames(data))
       .catch(console.error)
       .finally(() => setIsLoading(false));

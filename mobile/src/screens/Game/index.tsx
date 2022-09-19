@@ -4,11 +4,12 @@ import { Ad } from "@@types/Ad";
 import { AppStackParamsList } from "@@types/routes/ParamsList/App";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { RouteProp, useRoute } from "@react-navigation/native";
-import axios from "axios";
 
 import { Background } from "@components/Background";
 import { DuoCard } from "@components/DuoCard";
+import { DuoMatch } from "@components/DuoMatch";
 import { Heading } from "@components/Heading";
+import { api } from "@lib/axios";
 import { ActivityIndicator } from "@screens/Loading/styles";
 import { getBannerPhoto } from "@utils/getBannerPhoto";
 
@@ -16,7 +17,9 @@ import { AdList, Container, HeroImage } from "./styles";
 
 export function Game() {
   const [ads, setAds] = useState<Ad[]>([]);
+  const [discordSelected, setDiscordSelected] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isGettingDiscord, setIsGettingDiscord] = useState(false);
   const { params } = useRoute<RouteProp<AppStackParamsList, "Game">>();
   const headerHeight = useHeaderHeight();
 
@@ -26,9 +29,23 @@ export function Game() {
     height: 640,
   });
 
+  async function getDiscordByAdId(adId: string) {
+    setIsGettingDiscord(true);
+    try {
+      const {
+        data: { data },
+      } = await api.get(`/ads/${adId}/discord`);
+      setDiscordSelected(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsGettingDiscord(false);
+    }
+  }
+
   useEffect(() => {
-    axios
-      .get(`http://192.168.0.12:3333/games/${params.id}/ads`)
+    api
+      .get(`/games/${params.id}/ads`)
       .then(({ data: { data } }) => setAds(data))
       .catch(console.error)
       .finally(() => setIsLoading(false));
@@ -47,17 +64,18 @@ export function Game() {
             keyExtractor={(ad) => ad.id}
             renderItem={({ item }) => (
               <DuoCard
-                id={item.id}
-                name={item.name}
-                yearsPlaying={item.yearsPlaying}
-                hourStart={item.hourStart}
-                hourEnd={item.hourEnd}
-                weekDays={item.weekDays}
-                useVoiceChannel={item.useVoiceChannel}
+                data={item}
+                onConnect={() => getDiscordByAdId(item.id)}
+                isGettingDiscord={isGettingDiscord}
               />
             )}
           />
         )}
+        <DuoMatch
+          discord={discordSelected}
+          visible={discordSelected.length > 0}
+          onClose={() => setDiscordSelected("")}
+        />
       </Container>
     </Background>
   );

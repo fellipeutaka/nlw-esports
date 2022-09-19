@@ -4,29 +4,44 @@ import { useTheme } from "styled-components/native";
 
 import { DuoInfo } from "@components/DuoInfo";
 
-import { ConnectButton, ConnectText, Container } from "./styles";
+import {
+  ConnectButton,
+  ConnectText,
+  Container,
+  ActivityIndicator,
+} from "./styles";
 
-export function DuoCard(props: Ad) {
+interface DuoCardProps {
+  data: Ad;
+  isGettingDiscord: boolean;
+  onConnect: () => void;
+}
+
+export function DuoCard({ data, onConnect, isGettingDiscord }: DuoCardProps) {
   const theme = useTheme();
 
   return (
     <Container>
-      <DuoInfo label="Nome" value={props.name} />
-      <DuoInfo label="Tempo de jogo" value={`${props.yearsPlaying} anos`} />
+      <DuoInfo label="Nome" value={data.name} />
+      <DuoInfo label="Tempo de jogo" value={`${data.yearsPlaying} anos`} />
       <DuoInfo
         label="Disponibilidade"
-        value={`${props.weekDays.length} dias \u2022 ${props.hourStart} - ${props.hourEnd}`}
+        value={`${data.weekDays.length} dias \u2022 ${data.hourStart} - ${data.hourEnd}`}
       />
       <DuoInfo
         label="Chamada de áudio?"
-        value={props.useVoiceChannel ? "Sim" : "Não"}
-        color={
-          props.useVoiceChannel ? theme.COLORS.SUCCESS : theme.COLORS.ALERT
-        }
+        value={data.useVoiceChannel ? "Sim" : "Não"}
+        color={data.useVoiceChannel ? theme.COLORS.SUCCESS : theme.COLORS.ALERT}
       />
-      <ConnectButton>
-        <GameController size={20} color={theme.COLORS.TEXT} />
-        <ConnectText>Conectar</ConnectText>
+      <ConnectButton onPress={onConnect} disabled={isGettingDiscord}>
+        {isGettingDiscord ? (
+          <ActivityIndicator size="small" />
+        ) : (
+          <>
+            <GameController size={20} color={theme.COLORS.TEXT} />
+            <ConnectText>Conectar</ConnectText>
+          </>
+        )}
       </ConnectButton>
     </Container>
   );

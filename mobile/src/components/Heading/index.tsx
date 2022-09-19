@@ -12,7 +12,7 @@ interface HeadingProps extends ViewProps {
 
 export function Heading({ title, subtitle, ...rest }: HeadingProps) {
   return (
-    <Container>
+    <Container {...rest}>
       <Title text={title} />
       <SubTitle text={subtitle} />
     </Container>

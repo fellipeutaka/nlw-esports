@@ -6,9 +6,13 @@ export const Container = styled.View`
   align-items: center;
 `;
 
-export const ActivityIndicator = styled.ActivityIndicator.attrs(
-  ({ theme }) => ({
+interface ActivityIndicatorProps {
+  size?: "small" | "large";
+}
+
+export const ActivityIndicator = styled.ActivityIndicator.attrs<ActivityIndicatorProps>(
+  ({ theme, size = "large" }) => ({
     color: theme.COLORS.PRIMARY,
-    size: "large",
+    size,
   })
 )``;

@@ -51,7 +51,8 @@ An online and completely free event that will help you take the next step in you
   - Building the back-end.
 - Stage 4: Power Up - ✔️
   - Consuming backend's API RESTFul on Web and Mobile app.
-- Stage 5: Final Round - ⌛
+- Stage 5: Final Round - ✔️
+  - Creating ads and connecting to other people in mobile.
 
 ## 💻 Project
 
