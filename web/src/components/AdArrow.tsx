@@ -3,7 +3,7 @@ import { CaretLeft, CaretRight } from "phosphor-react";
 interface AdArrowProps {
   disabled: boolean;
   left?: boolean;
-  onClick(): void;
+  onClick: (() => void) | undefined;
 }
 
 export function AdArrow(props: AdArrowProps) {

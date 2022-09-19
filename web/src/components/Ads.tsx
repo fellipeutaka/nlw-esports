@@ -44,19 +44,15 @@ export function Ads() {
           />
         ))}
       </section>
-      {instanceRef.current && (
-        <>
-          <AdArrow
-            left
-            onClick={instanceRef.current.prev}
-            disabled={currentSlide === 0}
-          />
-          <AdArrow
-            onClick={instanceRef.current.next}
-            disabled={currentSlide === gameAds.length - adsPerView}
-          />
-        </>
-      )}
+      <AdArrow
+        left
+        onClick={instanceRef.current?.prev}
+        disabled={currentSlide === 0}
+      />
+      <AdArrow
+        onClick={instanceRef.current?.next}
+        disabled={currentSlide === gameAds.length - adsPerView}
+      />
     </div>
   );
 }
