@@ -21,6 +21,7 @@
       "@contexts/*": ["./src/contexts/*"],
       "@hooks/*": ["./src/hooks/*"],
       "@utils/*": ["./src/utils/*"],
+      "@services/*": ["./src/services/*"],
       "@lib/*": ["./src/lib/*"],
       "@styles/*": ["./src/styles/*"]
     }
