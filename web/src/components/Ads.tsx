@@ -17,6 +17,26 @@ export function Ads() {
       spacing: 24,
       perView: adsPerView,
     },
+    breakpoints: {
+      "(max-width: 1024px)": {
+        slides: {
+          spacing: 24,
+          perView: adsPerView - 1,
+        },
+      },
+      "(max-width: 768px)": {
+        slides: {
+          spacing: 24,
+          perView: adsPerView - 2,
+        },
+      },
+      "(max-width: 640px)": {
+        slides: {
+          spacing: 24,
+          perView: adsPerView - 4,
+        },
+      },
+    },
     slideChanged(slider) {
       setCurrentSlide(slider.track.details.rel);
     },
@@ -36,7 +56,7 @@ export function Ads() {
   }
 
   return (
-    <div className="relative w-full">
+    <div className="relative md:w-full w-3/4">
       <section ref={sliderRef} className="mt-16 keen-slider">
         {gameAds.map((gameAd, index) => (
           <GameAd

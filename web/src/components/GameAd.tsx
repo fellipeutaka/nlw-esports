@@ -35,8 +35,10 @@ export function GameAd({ bannerUrl, name, count, index }: GameAdProps) {
         className="w-[180px] h-60"
       />
       <div className="w-full pt-16 pb-4 px-4 bg-game-gradient flex flex-col absolute inset-0 top-auto">
-        <strong className="font-bold">{name}</strong>
-        <span className="text-zinc-300 text-sm">{getAdsCountText(count)}</span>
+        <strong className="font-bold md:text-left text-center">{name}</strong>
+        <span className="text-zinc-300 text-sm md:text-left text-center">
+          {getAdsCountText(count)}
+        </span>
       </div>
     </a>
   );
