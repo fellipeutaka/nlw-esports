@@ -85,7 +85,7 @@ export function Dialog() {
       });
     } else {
       try {
-        const response = await fetch(`/api/games/${formData.game}/ads`, {
+        await fetch(`/api/games/${formData.game}/ads`, {
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
@@ -112,10 +112,13 @@ export function Dialog() {
       <DialogPrimitive.Portal>
         <DialogPrimitive.Overlay className="fixed inset-0 bg-black/60 animate-fadeIn" />
         <DialogPrimitive.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 py-8 px-10 bg-[#2A2634] rounded-lg focus:outline-none shadow-lg shadow-black/50 animate-dialogShow">
-          <DialogPrimitive.Title className="text-3xl font-black">
+          <DialogPrimitive.Title className="md:text-3xl text-2xl md:text-left text-center font-black">
             Publique um anúncio
           </DialogPrimitive.Title>
-          <form className="flex flex-col gap-4 mt-8" onSubmit={handleSubmit}>
+          <form
+            className="flex flex-col gap-4 md:mt-8 mt-4"
+            onSubmit={handleSubmit}
+          >
             <div className="flex flex-col gap-2">
               <Label htmlFor="game">Qual o game?</Label>
               <Select setFields={setFields} />
@@ -129,8 +132,8 @@ export function Dialog() {
                 placeholder="Como te chamam dentro do game?"
               />
             </div>
-            <div className="flex gap-6 items-center">
-              <div className="flex flex-col gap-2 flex-1">
+            <div className="flex md:flex-row flex-col gap-6 items-center">
+              <div className="flex flex-col gap-2 flex-1 w-full">
                 <Label htmlFor="yearsPlaying">Joga há quantos anos?</Label>
                 <Input
                   value={String(fields.yearsPlaying)}
@@ -147,7 +150,7 @@ export function Dialog() {
                   placeholder="Tudo bem ser ZERO"
                 />
               </div>
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-2 w-full">
                 <Label htmlFor="discord">Qual seu Discord?</Label>
                 <Input
                   value={fields.discord}
@@ -158,7 +161,7 @@ export function Dialog() {
                 />
               </div>
             </div>
-            <div className="flex gap-6 items-center">
+            <div className="flex md:flex-row flex-col gap-6 items-center">
               <div className="flex flex-col gap-2">
                 <Label htmlFor="weekDays">Quando costuma jogar?</Label>
                 <ToggleGroup
@@ -211,13 +214,13 @@ export function Dialog() {
                   />
                 </ToggleGroup>
               </div>
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-2 w-full">
                 <Label htmlFor="hourStart">Qual horário do dia?</Label>
                 <div className="flex gap-2">
                   <Input
                     value={fields.hourStart}
                     onChange={(e) => onInputChange(e, "hourStart")}
-                    className="w-20"
+                    className="md:w-20 w-1/2"
                     name="hourStart"
                     id="hourStart"
                     placeholder="De"
@@ -225,7 +228,7 @@ export function Dialog() {
                   <Input
                     value={fields.hourEnd}
                     onChange={(e) => onInputChange(e, "hourEnd")}
-                    className="w-20"
+                    className="md:w-20 w-1/2"
                     name="hourEnd"
                     id="hourEnd"
                     placeholder="Até"

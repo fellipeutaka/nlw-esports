@@ -160,7 +160,7 @@ This project is under the MIT license. See the [LICENSE](https://github.com/fell
 
 Made with ♥ by Fellipe Utaka 👋 [Get in touch!](https://www.linkedin.com/in/fellipeutaka/)
 
-[figma]: https://www.figma.com/file/WNtF2d8WEh69bddiJHwYiV/NLW-eSports-(Community)?node-id=6%3A23
+[figma]: https://www.figma.com/file/WNtF2d8WEh69bddiJHwYiV/NLW-eSports-(Community)?node-id=0%3A1
 [node]: https://nodejs.org/
 [prisma]: https://www.prisma.io/
 [mongodb]: https://www.mongodb.com/
