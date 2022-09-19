@@ -10,6 +10,7 @@ const adsPerView = 6;
 
 export function Ads() {
   const [gameAds, setGameAds] = useState<IGameAd[]>([]);
+  const [isSliderLoaded, setIsSliderLoaded] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [sliderRef, instanceRef] = useKeenSlider<HTMLDivElement>({
     slides: {
@@ -18,6 +19,9 @@ export function Ads() {
     },
     slideChanged(slider) {
       setCurrentSlide(slider.track.details.rel);
+    },
+    created() {
+      setIsSliderLoaded(true);
     },
   });
 
@@ -44,15 +48,19 @@ export function Ads() {
           />
         ))}
       </section>
-      <AdArrow
-        left
-        onClick={instanceRef.current?.prev}
-        disabled={currentSlide === 0}
-      />
-      <AdArrow
-        onClick={instanceRef.current?.next}
-        disabled={currentSlide === gameAds.length - adsPerView}
-      />
+      {isSliderLoaded && instanceRef.current && (
+        <>
+          <AdArrow
+            left
+            onClick={instanceRef.current.prev}
+            disabled={currentSlide === 0}
+          />
+          <AdArrow
+            onClick={instanceRef.current.next}
+            disabled={currentSlide === gameAds.length - adsPerView}
+          />
+        </>
+      )}
     </div>
   );
 }
