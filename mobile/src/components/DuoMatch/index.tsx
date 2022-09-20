@@ -4,6 +4,7 @@ import { ModalProps, ToastAndroid } from "react-native";
 import { setStringAsync } from "expo-clipboard";
 
 import { ActivityIndicator } from "@screens/Loading/styles";
+import { Alert } from "@utils/alert";
 
 import {
   CheckIcon,
@@ -30,13 +31,10 @@ export function DuoMatch({ discord, onClose, ...rest }: DuoMatchProps) {
     setIsCopying(true);
     try {
       await setStringAsync(discord);
-      ToastAndroid.show("Discord copiado com sucesso!", ToastAndroid.SHORT);
+      Alert({ title: "Sucesso", message: "Discord copiado com sucesso!" });
     } catch (err) {
       console.error(err);
-      ToastAndroid.show(
-        "Ocorreu um erro ao copiar o Discord!",
-        ToastAndroid.SHORT
-      );
+      Alert({ title: "Erro", message: "Ocorreu um erro ao copiar o Discord!" });
     } finally {
       setIsCopying(false);
     }

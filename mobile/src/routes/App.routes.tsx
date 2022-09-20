@@ -15,7 +15,10 @@ export function App() {
   const theme = useTheme();
 
   return (
-    <Navigator initialRouteName="Home">
+    <Navigator
+      initialRouteName="Home"
+      screenOptions={{ animation: "slide_from_right" }}
+    >
       <Screen name="Home" component={Home} options={{ headerShown: false }} />
       <Screen
         name="Game"

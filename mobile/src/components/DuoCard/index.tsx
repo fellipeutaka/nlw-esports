@@ -1,3 +1,5 @@
+import { memo } from "react";
+
 import { Ad } from "@@types/Ad";
 import { GameController } from "phosphor-react-native";
 import { useTheme } from "styled-components/native";
@@ -17,7 +19,7 @@ interface DuoCardProps {
   onConnect: () => void;
 }
 
-export function DuoCard({ data, onConnect, isGettingDiscord }: DuoCardProps) {
+function DuoCardComponent({ data, onConnect, isGettingDiscord }: DuoCardProps) {
   const theme = useTheme();
 
   return (
@@ -46,3 +48,5 @@ export function DuoCard({ data, onConnect, isGettingDiscord }: DuoCardProps) {
     </Container>
   );
 }
+
+export const DuoCard = memo(DuoCardComponent);

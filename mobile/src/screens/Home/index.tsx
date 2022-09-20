@@ -10,6 +10,7 @@ import { Heading } from "@components/Heading";
 import { useAppNavigation } from "@hooks/useAppNavigation";
 import { api } from "@lib/axios";
 import { ActivityIndicator } from "@screens/Loading/styles";
+import { Alert } from "@utils/alert";
 
 import { Container, GameList, Logo } from "./styles";
 
@@ -28,7 +29,7 @@ export function Home() {
 
   function handleOpenGame(props: Game) {
     if (props._count.ads <= 0) {
-      ToastAndroid.show("Não há anúncios para esse jogo", ToastAndroid.SHORT);
+      Alert({ title: "Aviso", message: "Não há anúncios para esse jogo" });
     } else {
       navigation.navigate("Game", props);
     }

@@ -87,38 +87,20 @@ To clone and run this application, you'll need [Git](https://git-scm.com), [Node
 
 From your command line:
 
-### Install API
+### Install Front-end and Back-end
 
 ```bash
 # Clone this repository
 $ git clone https://github.com/fellipeutaka/nlw-esports.git
 
 # Navigate to directory
-$ cd server
+$ cd web
 
 # Install dependencies
 $ yarn
 
 # Generate Prisma Client types
 $ yarn prisma generate
-
-# Start server
-$ yarn dev
-
-# running on port 3333
-```
-
-### Install Front-end
-
-```bash
-# Clone this repository
-$ git clone https://github.com/fellipeutaka/nlw-esports.git
-
-# Install dependencies
-$ yarn
-
-# Navigate to directory
-$ cd web
 
 # Start server
 $ yarn dev

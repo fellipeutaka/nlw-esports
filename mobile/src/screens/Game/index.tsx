@@ -15,11 +15,15 @@ import { getBannerPhoto } from "@utils/getBannerPhoto";
 
 import { AdList, Container, HeroImage } from "./styles";
 
+const isGettingDiscordInitialState = { isGetting: false, adId: "" };
+
 export function Game() {
   const [ads, setAds] = useState<Ad[]>([]);
   const [discordSelected, setDiscordSelected] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isGettingDiscord, setIsGettingDiscord] = useState(false);
+  const [isGettingDiscord, setIsGettingDiscord] = useState(
+    isGettingDiscordInitialState
+  );
   const { params } = useRoute<RouteProp<AppStackParamsList, "Game">>();
   const headerHeight = useHeaderHeight();
 
@@ -30,7 +34,7 @@ export function Game() {
   });
 
   async function getDiscordByAdId(adId: string) {
-    setIsGettingDiscord(true);
+    setIsGettingDiscord({ isGetting: true, adId });
     try {
       const {
         data: { data },
@@ -39,7 +43,7 @@ export function Game() {
     } catch (err) {
       console.error(err);
     } finally {
-      setIsGettingDiscord(false);
+      setIsGettingDiscord(isGettingDiscordInitialState);
     }
   }
 
@@ -66,7 +70,10 @@ export function Game() {
               <DuoCard
                 data={item}
                 onConnect={() => getDiscordByAdId(item.id)}
-                isGettingDiscord={isGettingDiscord}
+                isGettingDiscord={
+                  isGettingDiscord.isGetting &&
+                  isGettingDiscord.adId === item.id
+                }
               />
             )}
           />
