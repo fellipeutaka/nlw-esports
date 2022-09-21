@@ -35,7 +35,10 @@ interface ErrorMessage {
 const schema = z.object({
   game: z.string().trim().min(1, "Jogo é obrigatório"),
   name: z.string().trim().min(1, "Nome é obrigatório!"),
-  yearsPlaying: z.number(),
+  yearsPlaying: z
+    .number()
+    .int("Anos jogados deve ser um número inteiro!")
+    .nonnegative("Anos jogados não podem ser negativos!"),
   discord: z
     .string()
     .trim()

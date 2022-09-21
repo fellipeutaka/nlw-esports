@@ -19,6 +19,16 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     brightness(106%) contrast(100%);
 }
 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
 .outline {
   @apply outline-none focus:outline-offset-1 transition-all duration-300;
 }
