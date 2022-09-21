@@ -6,16 +6,26 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const adId = req.query.id;
+  const adId = String(req.query.id);
+  if (!adId) {
+    return res.status(400).json({ message: "Missing ad id" });
+  }
+
   if (req.method === "GET") {
-    const { discord } = await prisma.ad.findUniqueOrThrow({
+    const ad = await prisma.ad.findUnique({
       select: {
         discord: true,
       },
       where: {
-        id: String(adId),
+        id: adId,
       },
     });
+
+    if (!ad) {
+      return res.status(404).json({ message: "Ad not found" });
+    }
+
+    const { discord } = ad;
 
     return res.status(200).json({
       data: discord,

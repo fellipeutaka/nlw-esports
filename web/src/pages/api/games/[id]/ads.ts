@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import { prisma } from "@lib/prisma";
+import { adSchema } from "@utils/adSchema";
 import { convertHourStringToMinutes } from "@utils/convertHourStringToMinutes";
 import { convertMinutesToHourString } from "@utils/convertMinutesToHourString";
 
@@ -37,8 +38,33 @@ export default async function handler(
     });
   }
   if (req.method === "POST") {
-    const hourStart = convertHourStringToMinutes(req.body.hourStart);
-    const hourEnd = convertHourStringToMinutes(req.body.hourEnd);
+    const {
+      name,
+      discord,
+      weekDays,
+      yearsPlaying,
+      hourStart,
+      hourEnd,
+      useVoiceChannel,
+    } = req.body;
+    const bodyData = {
+      game: gameId,
+      name,
+      discord,
+      weekDays,
+      yearsPlaying,
+      hourStart,
+      hourEnd,
+      useVoiceChannel,
+    };
+    const schemaParse = adSchema.safeParse(bodyData);
+    if (!schemaParse.success) {
+      console.error(schemaParse.error.message);
+      return res.status(400).json({ message: "Missing body params" });
+    }
+
+    const hourStartInMinutes = convertHourStringToMinutes(req.body.hourStart);
+    const hourEndInMinutes = convertHourStringToMinutes(req.body.hourEnd);
 
     if (hourStart >= hourEnd) {
       return res
@@ -49,13 +75,13 @@ export default async function handler(
     const ad = await prisma.ad.create({
       data: {
         gameId,
-        name: req.body.name,
-        discord: req.body.discord,
-        weekDays: req.body.weekDays,
-        yearsPlaying: req.body.yearsPlaying,
-        hourStart,
-        hourEnd,
-        useVoiceChannel: req.body.useVoiceChannel,
+        name,
+        discord,
+        weekDays,
+        yearsPlaying,
+        hourStart: hourStartInMinutes,
+        hourEnd: hourEndInMinutes,
+        useVoiceChannel,
       },
     });
     return res.status(201).json({

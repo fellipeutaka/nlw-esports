@@ -5,9 +5,9 @@ import * as Checkbox from "@radix-ui/react-checkbox";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { Root as ToggleGroup } from "@radix-ui/react-toggle-group";
 import { Check, GameController, MagnifyingGlassPlus } from "phosphor-react";
-import { z } from "zod";
 
 import { Select } from "@components/Form/Select";
+import { adSchema } from "@utils/adSchema";
 
 import { Input } from "../Form/Input";
 import { Label } from "../Form/Label";
@@ -32,33 +32,6 @@ interface ErrorMessage {
   type: string;
 }
 
-const schema = z.object({
-  game: z.string().trim().min(1, "Jogo é obrigatório"),
-  name: z.string().trim().min(1, "Nome é obrigatório!"),
-  yearsPlaying: z
-    .number()
-    .int("Anos jogados deve ser um número inteiro!")
-    .nonnegative("Anos jogados não podem ser negativos!"),
-  discord: z
-    .string()
-    .trim()
-    .min(1, "Discord é obrigatório!")
-    .regex(/[^\@\#\:]{2,32}#\d{4}$/s, "Discord inválido!"),
-  hourStart: z
-    .string()
-    .trim()
-    .min(5, "Horário que começa é obrigatório!")
-    .max(5, "Horário que começa inválido!"),
-  hourEnd: z
-    .string()
-    .min(5, "Horário que termina é obrigatório!")
-    .max(5, "Horário que termina inválido!"),
-  weekDays: z
-    .array(z.number())
-    .nonempty("É necessário selecionar pelo menos 1 dia da semana!"),
-  useVoiceChannel: z.boolean(),
-});
-
 export function Dialog() {
   const [fields, setFields] = useState<Fields>({
     game: "",
@@ -79,9 +52,11 @@ export function Dialog() {
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     const formData = { ...fields, weekDays: weekDays.map(Number) };
-    const parse = schema.safeParse(formData);
-    if (!parse.success) {
-      const errorMessages = JSON.parse(parse.error.message) as ErrorMessage[];
+    const schemaParse = adSchema.safeParse(formData);
+    if (!schemaParse.success) {
+      const errorMessages = JSON.parse(
+        schemaParse.error.message
+      ) as ErrorMessage[];
       errorMessages.forEach((error) => {
         console.error(error);
         toast.error(error.message);
