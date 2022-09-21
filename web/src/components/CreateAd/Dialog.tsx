@@ -85,7 +85,7 @@ export function Dialog() {
       });
     } else {
       try {
-        await fetch(`/api/games/${formData.game}/ads`, {
+        const response = await fetch(`/api/games/${formData.game}/ads`, {
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
@@ -93,9 +93,13 @@ export function Dialog() {
           method: "POST",
           body: JSON.stringify(formData),
         });
-        //  Close dialog
-        document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
-        toast.success("Seu anúncio foi criado com sucesso!");
+        if (response.ok) {
+          //  Close dialog
+          document.dispatchEvent(
+            new KeyboardEvent("keydown", { key: "Escape" })
+          );
+          toast.success("Seu anúncio foi criado com sucesso!");
+        }
       } catch (err) {
         toast.error("Ocorreu um erro! Tente novamente mais tarde.");
         console.error(err);
@@ -220,17 +224,19 @@ export function Dialog() {
                   <Input
                     value={fields.hourStart}
                     onChange={(e) => onInputChange(e, "hourStart")}
-                    className="md:w-20 w-1/2"
+                    className="md:w-32 w-1/2"
                     name="hourStart"
                     id="hourStart"
+                    type="time"
                     placeholder="De"
                   />
                   <Input
                     value={fields.hourEnd}
                     onChange={(e) => onInputChange(e, "hourEnd")}
-                    className="md:w-20 w-1/2"
+                    className="md:w-32 w-1/2"
                     name="hourEnd"
                     id="hourEnd"
+                    type="time"
                     placeholder="Até"
                   />
                 </div>

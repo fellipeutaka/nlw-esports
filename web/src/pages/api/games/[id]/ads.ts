@@ -37,6 +37,15 @@ export default async function handler(
     });
   }
   if (req.method === "POST") {
+    const hourStart = convertHourStringToMinutes(req.body.hourStart);
+    const hourEnd = convertHourStringToMinutes(req.body.hourEnd);
+
+    if (hourStart >= hourEnd) {
+      return res
+        .status(400)
+        .json({ message: "Hour start is greater than hour end" });
+    }
+
     const ad = await prisma.ad.create({
       data: {
         gameId,
@@ -44,8 +53,8 @@ export default async function handler(
         discord: req.body.discord,
         weekDays: req.body.weekDays,
         yearsPlaying: req.body.yearsPlaying,
-        hourStart: convertHourStringToMinutes(req.body.hourStart),
-        hourEnd: convertHourStringToMinutes(req.body.hourEnd),
+        hourStart,
+        hourEnd,
         useVoiceChannel: req.body.useVoiceChannel,
       },
     });
