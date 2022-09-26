@@ -66,7 +66,7 @@ export default async function handler(
     const hourStartInMinutes = convertHourStringToMinutes(req.body.hourStart);
     const hourEndInMinutes = convertHourStringToMinutes(req.body.hourEnd);
 
-    if (hourStart >= hourEnd) {
+    if (hourStartInMinutes >= hourEndInMinutes) {
       return res
         .status(400)
         .json({ message: "Hour start is greater than hour end" });
