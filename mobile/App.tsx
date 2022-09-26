@@ -6,6 +6,7 @@ import {
 import { StatusBar } from "expo-status-bar";
 import { ThemeProvider } from "styled-components/native";
 
+import { AuthProvider } from "@contexts/AuthContext";
 import { Routes } from "@routes";
 import theme from "@theme";
 
@@ -14,9 +15,10 @@ export default function App() {
     <SafeAreaProvider initialMetrics={initialWindowMetrics}>
       <ThemeProvider theme={theme}>
         <StatusBar style="light" backgroundColor="transparent" translucent />
-        <Routes />
+        <AuthProvider>
+          <Routes />
+        </AuthProvider>
       </ThemeProvider>
     </SafeAreaProvider>
   );
 }
-

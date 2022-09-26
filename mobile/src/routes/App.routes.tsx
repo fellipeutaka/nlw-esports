@@ -4,10 +4,9 @@ import { AppStackParamsList } from "@@types/routes/ParamsList/App";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "styled-components/native";
 
+import logo from "@assets/logo-nlw-esports.png";
 import { Game } from "@screens/Game";
 import { Home } from "@screens/Home";
-
-import logo from "../assets/logo-nlw-esports.png";
 
 const { Navigator, Screen } = createNativeStackNavigator<AppStackParamsList>();
 
