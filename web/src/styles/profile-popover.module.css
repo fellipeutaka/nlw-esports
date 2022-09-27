@@ -1,0 +1,23 @@
+.trigger {
+  @apply absolute top-0 right-0 w-16 h-16 rounded-full;
+}
+
+.content {
+  @apply w-64 pt-1 pb-2 rounded-md bg-[#2A2634] flex flex-col shadow-xl;
+}
+
+.content[data-state="open"][data-side="top"] {
+  @apply animate-slideDownAndFade;
+}
+
+.content[data-state="open"][data-side="right"] {
+  @apply animate-slideLeftAndFade;
+}
+
+.content[data-state="open"][data-side="bottom"] {
+  @apply animate-slideUpAndFade;
+}
+
+.content[data-state="open"][data-side="left"] {
+  @apply animate-slideRightAndFade;
+}
