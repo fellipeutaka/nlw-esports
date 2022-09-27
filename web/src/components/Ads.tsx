@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 
+import { Ad } from "@@types/Ad";
 import { GameAd as IGameAd } from "@@types/GameAd";
 import { useKeenSlider } from "keen-slider/react";
 import Lottie from "lottie-react";
 
 import loadingAnimation from "@assets/loading.json";
+import { supabase } from "@lib/supabase";
 
 import { AdArrow } from "./AdArrow";
 import { GameAd } from "./GameAd";
@@ -51,22 +53,57 @@ export function Ads() {
   });
 
   useEffect(() => {
-    fetch("/api/games")
-      .then((res) => res.json())
-      .then(({ data }) => setGameAds(data))
-      .catch((err) => {
+    (async () => {
+      try {
+        const { data } = await supabase
+          .from<IGameAd>("Game")
+          .select("*, Ad(id)")
+          .order("name", {
+            ascending: true,
+          })
+          .throwOnError();
+        if (data) {
+          setGameAds(data);
+        }
+
+        const realtime = supabase
+          .from<Ad>("Ad")
+          .on("*", (res) => {
+            if (res.eventType === "INSERT") {
+              const game = gameAds.find((game) => game.id === res.new.gameId);
+
+              if (game) {
+                gameAds
+                  .find((game) => game.id === res.new.gameId)
+                  ?.Ad.push(res.new);
+
+                setGameAds((state) =>
+                  state.map((gameAds) =>
+                    gameAds.id === game.id ? game : gameAds
+                  )
+                );
+              }
+            }
+          })
+          .subscribe();
+        return () => {
+          realtime.unsubscribe();
+        };
+      } catch (err) {
         console.error(err);
         toast.error("Ocorreu um erro ao buscar os jogos!");
-      })
-      .finally(() => setIsFetchingGames(false));
-  }, []);
+      } finally {
+        setIsFetchingGames(false);
+      }
+    })();
+  }, [gameAds]);
 
   if (isFetchingGames) {
     return (
       <Lottie
         animationData={loadingAnimation}
         loop
-        style={{ width: "100%", height: "25vh" }}
+        className="w-full h-[25vh]"
       />
     );
   }
@@ -84,7 +121,7 @@ export function Ads() {
             index={index}
             bannerUrl={gameAd.bannerUrl}
             name={gameAd.name}
-            count={gameAd._count.ads}
+            count={gameAd.Ad.length}
           />
         ))}
       </section>

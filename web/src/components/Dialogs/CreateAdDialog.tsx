@@ -1,20 +1,19 @@
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { toast } from "react-toastify";
 
+import { SupabaseAd } from "@@types/Ad";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as Checkbox from "@radix-ui/react-checkbox";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import * as SelectPrimitive from "@radix-ui/react-select";
 import { Root as ToggleGroup } from "@radix-ui/react-toggle-group";
-import {
-  CaretDown,
-  Check,
-  GameController,
-  MagnifyingGlassPlus,
-} from "phosphor-react";
+import { CaretDown, Check, GameController } from "phosphor-react";
 
+import { CreateAdTrigger } from "@components/CreateAd/CreateAdTrigger";
 import { ErrorMessage } from "@components/Form/ErrorMessage";
 import { Select } from "@components/Form/Select";
+import { useAuth } from "@hooks/useAuth";
+import { supabase } from "@lib/supabase";
 import { adSchema } from "@utils/adSchema";
 import { convertHourStringToMinutes } from "@utils/convertHourStringToMinutes";
 
@@ -26,14 +25,16 @@ export interface Fields {
   game: string;
   name: string;
   yearsPlaying: number;
-  discord: string;
+  description: string;
   hourStart: string;
   hourEnd: string;
   weekDays: number[];
   useVoiceChannel: boolean;
 }
 
-export function Dialog() {
+export function CreateAdDialog() {
+  const { user } = useAuth();
+
   const {
     register,
     handleSubmit,
@@ -47,8 +48,8 @@ export function Dialog() {
     defaultValues: {
       game: "",
       name: "",
-      yearsPlaying: 0,
-      discord: "",
+      yearsPlaying: undefined,
+      description: "",
       hourStart: "",
       hourEnd: "",
       weekDays: [],
@@ -69,22 +70,24 @@ export function Dialog() {
     }
 
     try {
-      const response = await fetch(`/api/games/${data.game}/ads`, {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        method: "POST",
-        body: JSON.stringify(data),
-      });
-      if (response.ok) {
-        reset();
-        //  Close dialog
-        document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
-        toast.success("Seu anúncio foi criado com sucesso!");
-      } else {
-        toast.error("Ocorreu um erro! Tente novamente mais tarde.");
-      }
+      await supabase
+        .from<SupabaseAd>("Ad")
+        .insert({
+          name: data.name,
+          description: data.description,
+          weekDays: data.weekDays,
+          yearsPlaying: data.yearsPlaying,
+          hourEnd: hourStartInMinutes,
+          hourStart: hourEndInMinutes,
+          useVoiceChannel: data.useVoiceChannel,
+          userId: user?.id,
+          gameId: data.game,
+        })
+        .throwOnError();
+      reset();
+      //  Close dialog
+      document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
+      toast.success("Seu anúncio foi criado com sucesso!");
     } catch (err) {
       toast.error("Ocorreu um erro! Tente novamente mais tarde.");
       console.error(err);
@@ -93,10 +96,7 @@ export function Dialog() {
 
   return (
     <DialogPrimitive.Root>
-      <DialogPrimitive.Trigger className="py-3 px-4 rounded-md bg-violet-500 hover:bg-violet-600 flex items-center gap-3 outline focus:outline-violet-500 sm:text-base text-sm">
-        <MagnifyingGlassPlus size={24} />
-        Publicar anúncio
-      </DialogPrimitive.Trigger>
+      <CreateAdTrigger />
       <DialogPrimitive.Portal>
         <DialogPrimitive.Overlay className="fixed inset-0 bg-black/60 animate-fadeIn" />
         <DialogPrimitive.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 py-8 px-10 bg-[#2A2634] rounded-lg focus:outline-none shadow-lg shadow-black/50 animate-dialogShow">
@@ -109,30 +109,34 @@ export function Dialog() {
           >
             <div className="flex flex-col gap-2">
               <Label htmlFor="game">Qual o game?</Label>
-              <SelectPrimitive.Root
-                onValueChange={(game) => {
-                  setValue("game", game);
-                  clearErrors("game");
-                }}
-              >
-                <SelectPrimitive.Trigger
-                  id="game"
-                  className="flex items-center justify-between bg-zinc-900 py-3 px-4 rounded text-sm outline focus:outline-violet-500"
-                  aria-invalid={Boolean(errors.game)}
-                >
-                  <SelectPrimitive.Value
-                    placeholder={
-                      <span className="text-zinc-500">
-                        Selecione o game que deseja jogar
-                      </span>
-                    }
-                  />
-                  <SelectPrimitive.Icon>
-                    <CaretDown size={24} className="text-zinc-400" />
-                  </SelectPrimitive.Icon>
-                </SelectPrimitive.Trigger>
-                <Select />
-              </SelectPrimitive.Root>
+              <Controller
+                name="game"
+                control={control}
+                render={({ field: { onBlur, onChange, ref } }) => (
+                  <SelectPrimitive.Root onValueChange={onChange}>
+                    <SelectPrimitive.Trigger
+                      id="game"
+                      className="flex items-center justify-between bg-zinc-900 py-3 px-4 rounded text-sm outline focus:outline-violet-500"
+                      aria-invalid={Boolean(errors.game)}
+                      onBlur={onBlur}
+                      ref={ref}
+                    >
+                      <SelectPrimitive.Value
+                        placeholder={
+                          <span className="text-zinc-500">
+                            Selecione o game que deseja jogar
+                          </span>
+                        }
+                      />
+                      <SelectPrimitive.Icon>
+                        <CaretDown size={24} className="text-zinc-400" />
+                      </SelectPrimitive.Icon>
+                    </SelectPrimitive.Trigger>
+                    <Select />
+                  </SelectPrimitive.Root>
+                )}
+              />
+
               <ErrorMessage message={errors.game?.message} />
             </div>
             <div className="flex flex-col gap-2">
@@ -160,14 +164,14 @@ export function Dialog() {
                 <ErrorMessage message={errors.yearsPlaying?.message} />
               </div>
               <div className="flex flex-col gap-2 w-full mb-auto">
-                <Label htmlFor="discord">Qual seu Discord?</Label>
+                <Label htmlFor="description">Descrição</Label>
                 <Input
-                  {...register("discord")}
-                  id="discord"
-                  placeholder="Usuario#0000"
-                  aria-invalid={Boolean(errors.discord)}
+                  {...register("description")}
+                  id="description"
+                  placeholder="Seu nível, rank ou patente"
+                  aria-invalid={Boolean(errors.description)}
                 />
-                <ErrorMessage message={errors.discord?.message} />
+                <ErrorMessage message={errors.description?.message} />
               </div>
             </div>
             <div className="flex md:flex-row flex-col gap-6 items-center">
