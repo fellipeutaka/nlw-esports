@@ -19,11 +19,34 @@ module.exports = {
           "0%": { opacity: "0", transform: "translate(-50%, -48%) scale(.96)" },
           "100%": { opacity: "1", transform: "translate(-50%, -50%) scale(1)" },
         },
+        slideUpAndFade: {
+          "0%": { opacity: "0", transform: "translateY(2px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        slideRightAndFade: {
+          "0%": { opacity: "0", transform: "translateX(-2px)" },
+          "100%": { opacity: "1", transform: "translateX(0)" },
+        },
+        slideDownAndFade: {
+          "0%": { opacity: "0", transform: "translateY(-2px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        slideLeftAndFade: {
+          "0%": { opacity: "0", transform: "translateX(2px)" },
+          "100%": { opacity: "1", transform: "translateX(0)" },
+        },
       },
       animation: {
         rgb: "rgb 4s linear alternate infinite",
         fadeIn: "fadeIn 300ms cubic-bezier(0.16, 1, 0.3, 1)",
         dialogShow: "dialogShow 300ms cubic-bezier(0.16, 1, 0.3, 1)",
+        slideDownAndFade:
+          "slideDownAndFade 300ms cubic-bezier(0.16, 1, 0.3, 1)",
+        slideLeftAndFade:
+          "slideLeftAndFade 300ms cubic-bezier(0.16, 1, 0.3, 1)",
+        slideUpAndFade: "slideUpAndFade 300ms cubic-bezier(0.16, 1, 0.3, 1)",
+        slideRightAndFade:
+          "slideRightAndFade 300ms cubic-bezier(0.16, 1, 0.3, 1)",
       },
       backgroundImage: {
         galaxy: "url('/bg.png')",
