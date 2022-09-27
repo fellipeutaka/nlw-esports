@@ -39,12 +39,12 @@ input[type="number"] {
 
 @keyframes shake {
   25% {
-    transform: translateX(0.5rem);
+    translate: 0.5rem;
   }
   50% {
-    transform: translateX(-0.5rem);
+    translate: -0.5rem;
   }
   75% {
-    transform: translateX(0.5rem);
+    translate: 0.5rem;
   }
 }
