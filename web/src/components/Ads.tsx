@@ -1,11 +1,7 @@
 import { useState, useEffect } from "react";
-import { toast } from "react-toastify";
 
 import { GameAd as IGameAd } from "@@types/GameAd";
 import { useKeenSlider } from "keen-slider/react";
-import Lottie from "lottie-react";
-
-import loadingAnimation from "@assets/loading.json";
 
 import { AdArrow } from "./AdArrow";
 import { GameAd } from "./GameAd";
@@ -16,7 +12,6 @@ export function Ads() {
   const [gameAds, setGameAds] = useState<IGameAd[]>([]);
   const [isSliderLoaded, setIsSliderLoaded] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [isFetchingGames, setIsFetchingGames] = useState(true);
   const [sliderRef, instanceRef] = useKeenSlider<HTMLDivElement>({
     slides: {
       spacing: 24,
@@ -53,23 +48,8 @@ export function Ads() {
   useEffect(() => {
     fetch("/api/games")
       .then((res) => res.json())
-      .then(({ data }) => setGameAds(data))
-      .catch((err) => {
-        console.error(err);
-        toast.error("Ocorreu um erro ao buscar os jogos!");
-      })
-      .finally(() => setIsFetchingGames(false));
+      .then(({ data }) => setGameAds(data));
   }, []);
-
-  if (isFetchingGames) {
-    return (
-      <Lottie
-        animationData={loadingAnimation}
-        loop
-        style={{ width: "100%", height: "25vh" }}
-      />
-    );
-  }
 
   if (gameAds.length <= 0) {
     return null;
