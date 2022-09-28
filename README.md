@@ -68,7 +68,7 @@ This project was developed with the following technologies:
 
 - [TypeScript][ts]
 - [Node.js][node]
-- [Supabase][supabase]
+- [Prisma][prisma]
 - [MongoDB][mongodb]
 - [React][react]
 - [Next.js][next]
@@ -99,7 +99,8 @@ $ cd web
 # Install dependencies
 $ yarn
 
-# Create .env based on the .env.example file
+# Generate Prisma Client types
+$ yarn prisma generate
 
 # Start server
 $ yarn dev
@@ -118,8 +119,6 @@ $ cd mobile
 
 # Install dependencies
 $ yarn
-
-# Create .env based on the .env.example file
 
 # Run
 $ yarn dev
@@ -145,7 +144,7 @@ Made with ♥ by Fellipe Utaka 👋 [Get in touch!](https://www.linkedin.com/in/
 
 [figma]: https://www.figma.com/file/WNtF2d8WEh69bddiJHwYiV/NLW-eSports-(Community)?node-id=0%3A1
 [node]: https://nodejs.org/
-[supabase]: https://supabase.com/
+[prisma]: https://www.prisma.io/
 [mongodb]: https://www.mongodb.com/
 [ts]: https://www.typescriptlang.org/
 [expo]: https://expo.dev/
