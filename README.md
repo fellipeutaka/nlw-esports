@@ -32,7 +32,8 @@
   <a href="#-layout">Layout</a>   |   
   <a href="#-how-to-use">How to use</a>   |   
   <a href="#-how-to-contribute">How to contribute</a>   |   
-  <a href="#memo-license">License</a>
+  <a href="#memo-license">License</a>   |   
+  <a href="https://nlw-esports-supabase.vercel.app/">Live demo</a>
 </p>
 
 ## ℹ️ What's Next Level Week?
