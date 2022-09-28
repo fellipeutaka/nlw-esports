@@ -13,7 +13,6 @@ import {
   MagnifyingGlassPlus,
 } from "phosphor-react";
 
-import { ErrorMessage } from "@components/Form/ErrorMessage";
 import { Select } from "@components/Form/Select";
 import { adSchema } from "@utils/adSchema";
 import { convertHourStringToMinutes } from "@utils/convertHourStringToMinutes";
@@ -133,7 +132,11 @@ export function Dialog() {
                 </SelectPrimitive.Trigger>
                 <Select />
               </SelectPrimitive.Root>
-              <ErrorMessage message={errors.game?.message} />
+              {errors.game && (
+                <Label className="text-red-600" role="alert">
+                  {errors.game.message}
+                </Label>
+              )}
             </div>
             <div className="flex flex-col gap-2">
               <Label htmlFor="name">Seu nome (ou nickname)</Label>
@@ -143,10 +146,14 @@ export function Dialog() {
                 placeholder="Como te chamam dentro do game?"
                 aria-invalid={Boolean(errors.game)}
               />
-              <ErrorMessage message={errors.name?.message} />
+              {errors.name && (
+                <Label className="text-red-600" role="alert">
+                  {errors.name.message}
+                </Label>
+              )}
             </div>
             <div className="flex md:flex-row flex-col gap-6 items-center">
-              <div className="flex flex-col gap-2 flex-1 w-full mb-auto">
+              <div className="flex flex-col gap-2 flex-1 w-full">
                 <Label htmlFor="yearsPlaying">Joga há quantos anos?</Label>
                 <Input
                   {...register("yearsPlaying", {
@@ -157,9 +164,13 @@ export function Dialog() {
                   placeholder="Tudo bem ser ZERO"
                   aria-invalid={Boolean(errors.yearsPlaying)}
                 />
-                <ErrorMessage message={errors.yearsPlaying?.message} />
+                {errors.yearsPlaying && (
+                  <Label className="text-red-600" role="alert">
+                    {errors.yearsPlaying.message}
+                  </Label>
+                )}
               </div>
-              <div className="flex flex-col gap-2 w-full mb-auto">
+              <div className="flex flex-col gap-2 w-full">
                 <Label htmlFor="discord">Qual seu Discord?</Label>
                 <Input
                   {...register("discord")}
@@ -167,11 +178,15 @@ export function Dialog() {
                   placeholder="Usuario#0000"
                   aria-invalid={Boolean(errors.discord)}
                 />
-                <ErrorMessage message={errors.discord?.message} />
+                {errors.discord && (
+                  <Label className="text-red-600" role="alert">
+                    {errors.discord.message}
+                  </Label>
+                )}
               </div>
             </div>
             <div className="flex md:flex-row flex-col gap-6 items-center">
-              <div className="flex flex-col gap-2 mb-auto">
+              <div className="flex flex-col gap-2">
                 <Label htmlFor="weekDays">Quando costuma jogar?</Label>
                 <Controller
                   name="weekDays"
@@ -188,7 +203,6 @@ export function Dialog() {
                       onChange={onChange}
                       type="multiple"
                       className="flex gap-2"
-                      aria-invalid={Boolean(errors.weekDays)}
                     >
                       <WeekDayButton
                         weekDay="D"
@@ -235,33 +249,41 @@ export function Dialog() {
                     </ToggleGroup>
                   )}
                 />
-                <ErrorMessage message={errors.weekDays?.message} />
+                {errors.weekDays && (
+                  <Label className="text-red-600" role="alert">
+                    {errors.weekDays.message}
+                  </Label>
+                )}
               </div>
-              <div className="flex flex-col gap-2 w-full mb-auto">
+              <div className="flex flex-col gap-2 w-full">
                 <Label htmlFor="hourStart">Qual horário do dia?</Label>
                 <div className="flex gap-2">
-                  <div className="w-full">
-                    <Input
-                      {...register("hourStart")}
-                      id="hourStart"
-                      type="time"
-                      placeholder="De"
-                      aria-invalid={Boolean(errors.hourStart)}
-                      className="w-full"
-                    />
-                    <ErrorMessage message={errors.hourStart?.message} />
-                  </div>
-                  <div className="w-full">
-                    <Input
-                      {...register("hourEnd")}
-                      id="hourEnd"
-                      type="time"
-                      placeholder="Até"
-                      aria-invalid={Boolean(errors.hourEnd)}
-                      className="w-full"
-                    />
-                    <ErrorMessage message={errors.hourEnd?.message} />
-                  </div>
+                  <Input
+                    {...register("hourStart")}
+                    className="md:w-32 w-1/2"
+                    id="hourStart"
+                    type="time"
+                    placeholder="De"
+                    aria-invalid={Boolean(errors.hourStart)}
+                  />
+                  {errors.hourStart && (
+                    <Label className="text-red-600" role="alert">
+                      {errors.hourStart.message}
+                    </Label>
+                  )}
+                  <Input
+                    {...register("hourEnd")}
+                    className="md:w-32 w-1/2"
+                    id="hourEnd"
+                    type="time"
+                    placeholder="Até"
+                    aria-invalid={Boolean(errors.hourEnd)}
+                  />
+                  {errors.hourEnd && (
+                    <Label className="text-red-600" role="alert">
+                      {errors.hourEnd.message}
+                    </Label>
+                  )}
                 </div>
               </div>
             </div>
