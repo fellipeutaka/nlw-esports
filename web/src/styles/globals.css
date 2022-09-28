@@ -32,19 +32,3 @@ input[type="number"] {
 .outline {
   @apply outline-none focus:outline-offset-1 transition-all duration-300;
 }
-
-[aria-invalid="true"] {
-  animation: shake 300ms;
-}
-
-@keyframes shake {
-  25% {
-    transform: translateX(0.5rem);
-  }
-  50% {
-    transform: translateX(-0.5rem);
-  }
-  75% {
-    transform: translateX(0.5rem);
-  }
-}
