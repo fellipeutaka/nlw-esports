@@ -4,17 +4,14 @@ export const adSchema = z.object({
   game: z.string().trim().min(1, "Jogo é obrigatório!"),
   name: z.string().trim().min(1, "Nome é obrigatório!"),
   yearsPlaying: z
-    .number({
-      required_error: "Anos jogados é obrigatório!",
-      invalid_type_error: "Anos jogados deve ser um número!",
-    })
+    .number()
     .int("Anos jogados deve ser um número inteiro!")
     .nonnegative("Anos jogados não podem ser negativos!"),
-  description: z
+  discord: z
     .string()
     .trim()
-    .min(1, "Descrição é obrigatória!")
-    .max(48, "Descrição muito longa!"),
+    .min(1, "Discord é obrigatório!")
+    .regex(/[^\@\#\:]{2,32}#\d{4}$/s, "Discord inválido!"),
   hourStart: z
     .string()
     .trim()

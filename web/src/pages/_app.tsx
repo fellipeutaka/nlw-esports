@@ -5,11 +5,9 @@ import { ToastContainer } from "react-toastify";
 
 import type { AppProps } from "next/app";
 
-import { AuthProvider } from "@contexts/AuthContext";
-
 export default function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <AuthProvider>
+    <>
       <Component {...pageProps} />
       <ToastContainer
         position="top-right"
@@ -20,6 +18,6 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         closeOnClick
         theme="dark"
       />
-    </AuthProvider>
+    </>
   );
 }
