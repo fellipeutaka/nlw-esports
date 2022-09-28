@@ -1,4 +1,5 @@
 export interface Ad {
+  id: string;
   gameId: string;
   description: string;
   hourEnd: string;

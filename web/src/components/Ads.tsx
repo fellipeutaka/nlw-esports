@@ -1,12 +1,13 @@
-import { useState, useEffect } from "react";
-import { toast } from "react-toastify";
+import { useState, useEffect, useCallback } from "react";
 
 import { Ad } from "@@types/Ad";
 import { GameAd as IGameAd } from "@@types/GameAd";
+import { SupabaseRealtimePayload } from "@supabase/supabase-js";
 import { useKeenSlider } from "keen-slider/react";
 import Lottie from "lottie-react";
 
 import loadingAnimation from "@assets/loading.json";
+import { useGame } from "@hooks/useGame";
 import { supabase } from "@lib/supabase";
 
 import { AdArrow } from "./AdArrow";
@@ -15,10 +16,10 @@ import { GameAd } from "./GameAd";
 const adsPerView = 6;
 
 export function Ads() {
-  const [gameAds, setGameAds] = useState<IGameAd[]>([]);
+  const { games, isFetchingGames } = useGame();
+  const [gameAds, setGameAds] = useState<IGameAd[]>(games);
   const [isSliderLoaded, setIsSliderLoaded] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [isFetchingGames, setIsFetchingGames] = useState(true);
   const [sliderRef, instanceRef] = useKeenSlider<HTMLDivElement>({
     slides: {
       spacing: 24,
@@ -52,51 +53,51 @@ export function Ads() {
     },
   });
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const { data } = await supabase
-          .from<IGameAd>("Game")
-          .select("*, Ad(id)")
-          .order("name", {
-            ascending: true,
-          })
-          .throwOnError();
-        if (data) {
-          setGameAds(data);
-        }
+  const onInsertAd = useCallback(
+    (payload: SupabaseRealtimePayload<Ad>) => {
+      const game = gameAds.find((game) => game.id === payload.new.gameId);
 
-        const realtime = supabase
-          .from<Ad>("Ad")
-          .on("*", (res) => {
-            if (res.eventType === "INSERT") {
-              const game = gameAds.find((game) => game.id === res.new.gameId);
+      if (game) {
+        gameAds
+          .find((game) => game.id === payload.new.gameId)
+          ?.Ad.push(payload.new);
 
-              if (game) {
-                gameAds
-                  .find((game) => game.id === res.new.gameId)
-                  ?.Ad.push(res.new);
-
-                setGameAds((state) =>
-                  state.map((gameAds) =>
-                    gameAds.id === game.id ? game : gameAds
-                  )
-                );
-              }
-            }
-          })
-          .subscribe();
-        return () => {
-          realtime.unsubscribe();
-        };
-      } catch (err) {
-        console.error(err);
-        toast.error("Ocorreu um erro ao buscar os jogos!");
-      } finally {
-        setIsFetchingGames(false);
+        setGameAds((state) =>
+          state.map((gameAds) => (gameAds.id === game.id ? game : gameAds))
+        );
       }
-    })();
-  }, [gameAds]);
+    },
+    [gameAds]
+  );
+
+  const onDelete = useCallback(
+    (payload: SupabaseRealtimePayload<Ad>) => {
+      const changedGame = gameAds.find((game) =>
+        game.Ad.find((ad) => ad.id === payload.old.id)
+      );
+      const changedGameAdIndex =
+        changedGame?.Ad.findIndex((ad) => ad.id === payload.old.id) ?? 0;
+      changedGame?.Ad.splice(changedGameAdIndex, 1);
+
+      setGameAds((state) =>
+        state.map((game) => (game.id === changedGame?.id ? changedGame : game))
+      );
+    },
+    [gameAds]
+  );
+
+  useEffect(() => {
+    setGameAds(games);
+    const realtime = supabase
+      .from<Ad>("Ad")
+      .on("INSERT", (payload) => onInsertAd(payload))
+      .on("DELETE", (payload) => onDelete(payload))
+      .subscribe();
+
+    return () => {
+      realtime.unsubscribe();
+    };
+  }, [games, onInsertAd, onDelete]);
 
   if (isFetchingGames) {
     return (
