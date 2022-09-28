@@ -1,75 +1,37 @@
 import { useEffect, useState } from "react";
+import { ToastAndroid } from "react-native";
 
-import { Ad } from "@@types/Ad";
-import { GameAd } from "@@types/GameAd";
+import { Game } from "@@types/Game";
 
 import logoImg from "@assets/logo-nlw-esports.png";
 import { Background } from "@components/Background";
 import { GameCard } from "@components/GameCard";
 import { Heading } from "@components/Heading";
 import { useAppNavigation } from "@hooks/useAppNavigation";
-import { supabase } from "@lib/supabase";
+import { useAuth } from "@hooks/useAuth";
+import { api } from "@lib/axios";
 import { ActivityIndicator } from "@screens/Loading/styles";
+import { Button, ButtonText } from "@screens/SignIn/styles";
 import { Alert } from "@utils/alert";
 
 import { Container, GameList, Logo } from "./styles";
 
 export function Home() {
-  const [games, setGames] = useState<GameAd[]>([]);
+  const { signOut } = useAuth();
+  const [games, setGames] = useState<Game[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const navigation = useAppNavigation();
 
   useEffect(() => {
-    (async () => {
-      try {
-        const { data } = await supabase
-          .from<GameAd>("Game")
-          .select("*, Ad(id)")
-          .order("name", {
-            ascending: true,
-          })
-          .throwOnError();
-        if (data) {
-          setGames(data);
-        }
+    api
+      .get("/games")
+      .then(({ data: { data } }) => setGames(data))
+      .catch(console.error)
+      .finally(() => setIsLoading(false));
+  }, []);
 
-        const realtime = supabase
-          .from<Ad>("Ad")
-          .on("*", (res) => {
-            if (res.eventType === "INSERT") {
-              const game = games.find((game) => game.id === res.new.gameId);
-
-              if (game) {
-                games
-                  .find((game) => game.id === res.new.gameId)
-                  ?.Ad.push(res.new);
-
-                setGames((state) =>
-                  state.map((gameAds) =>
-                    gameAds.id === game.id ? game : gameAds
-                  )
-                );
-              }
-            }
-          })
-          .subscribe();
-        return () => {
-          realtime.unsubscribe();
-        };
-      } catch (err) {
-        console.error(err);
-        Alert({
-          title: "Erro",
-          message: "Ocorreu um erro ao buscar os jogos!",
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    })();
-  }, [games]);
-
-  function handleOpenGame(props: GameAd) {
-    if (props.Ad.length <= 0) {
+  function handleOpenGame(props: Game) {
+    if (props._count.ads <= 0) {
       Alert({ title: "Aviso", message: "Não há anúncios para esse jogo" });
     } else {
       navigation.navigate("Game", props);
@@ -84,6 +46,9 @@ export function Home() {
           title="Encontre seu duo!"
           subtitle="Selecione o game que deseja jogar..."
         />
+        <Button onPress={signOut}>
+          <ButtonText>Sair</ButtonText>
+        </Button>
         {isLoading ? (
           <ActivityIndicator />
         ) : (
@@ -93,7 +58,7 @@ export function Home() {
             renderItem={({ item }) => (
               <GameCard
                 id={item.id}
-                Ad={item.Ad}
+                _count={item._count}
                 bannerUrl={item.bannerUrl}
                 name={item.name}
                 onPress={() => handleOpenGame(item)}

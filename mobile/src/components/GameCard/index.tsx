@@ -1,15 +1,21 @@
 import { TouchableOpacityProps } from "react-native";
 
-import { GameAd } from "@@types/GameAd";
+import { Game } from "@@types/Game";
 
 import { getAdsCountText } from "@utils/getAdsCountText";
 import { getBannerPhoto } from "@utils/getBannerPhoto";
 
 import { Ads, Container, Cover, Footer, Name } from "./styles";
 
-type GameCardProps = TouchableOpacityProps & GameAd;
+type GameCardProps = TouchableOpacityProps & Game;
 
-export function GameCard({ id, name, Ad, bannerUrl, ...rest }: GameCardProps) {
+export function GameCard({
+  id,
+  name,
+  _count: { ads },
+  bannerUrl,
+  ...rest
+}: GameCardProps) {
   const imgSrc = getBannerPhoto({ url: bannerUrl, width: 480, height: 640 });
 
   return (
@@ -17,7 +23,7 @@ export function GameCard({ id, name, Ad, bannerUrl, ...rest }: GameCardProps) {
       <Cover source={{ uri: imgSrc }}>
         <Footer>
           <Name>{name}</Name>
-          <Ads>{getAdsCountText(Ad.length)}</Ads>
+          <Ads>{getAdsCountText(ads)}</Ads>
         </Footer>
       </Cover>
     </Container>
