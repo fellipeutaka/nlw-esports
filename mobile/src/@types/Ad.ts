@@ -1,19 +1,9 @@
-export interface SupabaseAd {
+export interface Ad {
   id: string;
   name: string;
-  description: string;
-  weekDays: number[];
   yearsPlaying: number;
-  hourStart: number;
-  hourEnd: number;
+  hourStart: string;
+  hourEnd: string;
+  weekDays: number[];
   useVoiceChannel: boolean;
-  userId: string;
-  gameId: string;
-  createdAt: Date | string;
-}
-
-export interface Ad extends SupabaseAd {
-  user: {
-    name: string;
-  };
 }
