@@ -9,12 +9,6 @@ export const Container = styled.View`
   margin-right: 16px;
 `;
 
-export const ActivityIndicator = styled.ActivityIndicator.attrs(
-  ({ theme }) => ({
-    color: theme.COLORS.TEXT,
-  })
-)``;
-
 export const ConnectButton = styled.TouchableOpacity`
   width: 140px;
   height: 36px;

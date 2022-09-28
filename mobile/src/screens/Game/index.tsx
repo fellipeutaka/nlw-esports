@@ -9,21 +9,17 @@ import { Background } from "@components/Background";
 import { DuoCard } from "@components/DuoCard";
 import { DuoMatch } from "@components/DuoMatch";
 import { Heading } from "@components/Heading";
-import { api } from "@lib/axios";
+import { supabase } from "@lib/supabase";
 import { ActivityIndicator } from "@screens/Loading/styles";
+import { Alert } from "@utils/alert";
 import { getBannerPhoto } from "@utils/getBannerPhoto";
 
 import { AdList, Container, HeroImage } from "./styles";
-
-const isGettingDiscordInitialState = { isGetting: false, adId: "" };
 
 export function Game() {
   const [ads, setAds] = useState<Ad[]>([]);
   const [discordSelected, setDiscordSelected] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isGettingDiscord, setIsGettingDiscord] = useState(
-    isGettingDiscordInitialState
-  );
   const { params } = useRoute<RouteProp<AppStackParamsList, "Game">>();
   const headerHeight = useHeaderHeight();
 
@@ -33,27 +29,48 @@ export function Game() {
     height: 640,
   });
 
-  async function getDiscordByAdId(adId: string) {
-    setIsGettingDiscord({ isGetting: true, adId });
-    try {
-      const {
-        data: { data },
-      } = await api.get(`/ads/${adId}/discord`);
-      setDiscordSelected(data);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setIsGettingDiscord(isGettingDiscordInitialState);
-    }
-  }
-
   useEffect(() => {
-    api
-      .get(`/games/${params.id}/ads`)
-      .then(({ data: { data } }) => setAds(data))
-      .catch(console.error)
-      .finally(() => setIsLoading(false));
-  }, []);
+    (async () => {
+      try {
+        const { data } = await supabase
+          .from<Ad>("Ad")
+          .select(
+            `
+            *,
+            user:userId (metadata->name)
+          `
+          )
+          .eq("gameId", params.id)
+          .order("createdAt", {
+            ascending: true,
+          })
+          .throwOnError();
+        if (data) {
+          setAds(data);
+        }
+
+        const realtime = supabase
+          .from<Ad>("Ad")
+          .on("*", (res) => {
+            if (res.eventType === "INSERT") {
+              setAds((state) => [...state, res.new]);
+            }
+          })
+          .subscribe();
+        return () => {
+          realtime.unsubscribe();
+        };
+      } catch (err) {
+        console.error(err);
+        Alert({
+          title: "Erro",
+          message: "Ocorreu um erro ao buscar os anúncios!",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    })();
+  }, [ads]);
 
   return (
     <Background>
@@ -69,11 +86,7 @@ export function Game() {
             renderItem={({ item }) => (
               <DuoCard
                 data={item}
-                onConnect={() => getDiscordByAdId(item.id)}
-                isGettingDiscord={
-                  isGettingDiscord.isGetting &&
-                  isGettingDiscord.adId === item.id
-                }
+                onConnect={() => setDiscordSelected(item.user.name)}
               />
             )}
           />

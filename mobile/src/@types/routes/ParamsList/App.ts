@@ -1,6 +1,6 @@
-import { Game } from "@@types/Game";
+import { GameAd } from "@@types/GameAd";
 
 export type AppStackParamsList = {
-  Home: undefined;
-  Game: Game;
+  Ads: undefined;
+  Game: GameAd;
 };

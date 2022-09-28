@@ -5,21 +5,16 @@ import { GameController } from "phosphor-react-native";
 import { useTheme } from "styled-components/native";
 
 import { DuoInfo } from "@components/DuoInfo";
+import { convertMinutesToHourString } from "@utils/convertMinutesToHourString";
 
-import {
-  ConnectButton,
-  ConnectText,
-  Container,
-  ActivityIndicator,
-} from "./styles";
+import { ConnectButton, ConnectText, Container } from "./styles";
 
 interface DuoCardProps {
   data: Ad;
-  isGettingDiscord: boolean;
   onConnect: () => void;
 }
 
-function DuoCardComponent({ data, onConnect, isGettingDiscord }: DuoCardProps) {
+function DuoCardComponent({ data, onConnect }: DuoCardProps) {
   const theme = useTheme();
 
   return (
@@ -28,22 +23,20 @@ function DuoCardComponent({ data, onConnect, isGettingDiscord }: DuoCardProps) {
       <DuoInfo label="Tempo de jogo" value={`${data.yearsPlaying} anos`} />
       <DuoInfo
         label="Disponibilidade"
-        value={`${data.weekDays.length} dias \u2022 ${data.hourStart} - ${data.hourEnd}`}
+        value={`${
+          data.weekDays.length
+        } dias \u2022 ${convertMinutesToHourString(
+          data.hourStart
+        )} - ${convertMinutesToHourString(data.hourEnd)}`}
       />
       <DuoInfo
         label="Chamada de áudio?"
         value={data.useVoiceChannel ? "Sim" : "Não"}
         color={data.useVoiceChannel ? theme.COLORS.SUCCESS : theme.COLORS.ALERT}
       />
-      <ConnectButton onPress={onConnect} disabled={isGettingDiscord}>
-        {isGettingDiscord ? (
-          <ActivityIndicator size="small" />
-        ) : (
-          <>
-            <GameController size={20} color={theme.COLORS.TEXT} />
-            <ConnectText>Conectar</ConnectText>
-          </>
-        )}
+      <ConnectButton onPress={onConnect}>
+        <GameController size={20} color={theme.COLORS.TEXT} />
+        <ConnectText>Conectar</ConnectText>
       </ConnectButton>
     </Container>
   );
