@@ -1,7 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import * as Popover from "@radix-ui/react-popover";
-import styles from "@styles/profile-popover.module.css";
 import { Megaphone, SignOut, User } from "phosphor-react";
 
 import { useAuth } from "@hooks/useAuth";
@@ -17,7 +16,7 @@ export function ProfilePopover() {
 
   return (
     <Popover.Root>
-      <Popover.Trigger className={styles.trigger}>
+      <Popover.Trigger className="absolute top-0 right-0 w-16 h-16 rounded-full">
         <img
           className="w-full h-full rounded-full"
           src={user.user_metadata.avatar_url}
@@ -25,7 +24,11 @@ export function ProfilePopover() {
         />
       </Popover.Trigger>
       <Popover.Portal>
-        <Popover.Content className={styles.content} align="end" sideOffset={8}>
+        <Popover.Content
+          className="w-64 pt-1 pb-2 rounded-md bg-[#2A2634] flex flex-col shadow-xl "
+          align="end"
+          sideOffset={8}
+        >
           <a
             href="/me"
             className="flex items-center px-6 pt-4 pb-3 hover:opacity-60 transition-opacity duration-300"
