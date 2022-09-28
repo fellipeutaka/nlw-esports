@@ -1,6 +1,6 @@
 import { Image, FlatList, FlatListProps } from "react-native";
 
-import { Game } from "@@types/Game";
+import { GameAd } from "@@types/GameAd";
 import styled from "styled-components/native";
 
 export const Container = styled.View`
@@ -16,7 +16,7 @@ export const Logo = styled(Image)`
 `;
 
 export const GameList = styled(
-  FlatList as new (props: FlatListProps<Game>) => FlatList<Game>
+  FlatList as new (props: FlatListProps<GameAd>) => FlatList<GameAd>
 ).attrs({
   showsHorizontalScrollIndicator: false,
   horizontal: true,
