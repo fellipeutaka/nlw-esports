@@ -37,7 +37,7 @@ export function ProfilePopover() {
             href="/me"
             className="flex items-center px-6 py-3 hover:opacity-60 transition-opacity duration-300"
           >
-            <Megaphone size={24} className="text-violet-500" />
+            <Megaphone size={24} className="text-violet-500 -scale-x-100" />
             <span className="ml-4">Meus anúncios</span>
           </a>
           <AlertDialog.Root>
