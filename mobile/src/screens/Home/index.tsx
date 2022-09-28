@@ -8,16 +8,13 @@ import { Background } from "@components/Background";
 import { GameCard } from "@components/GameCard";
 import { Heading } from "@components/Heading";
 import { useAppNavigation } from "@hooks/useAppNavigation";
-import { useAuth } from "@hooks/useAuth";
 import { api } from "@lib/axios";
 import { ActivityIndicator } from "@screens/Loading/styles";
-import { Button, ButtonText } from "@screens/SignIn/styles";
 import { Alert } from "@utils/alert";
 
 import { Container, GameList, Logo } from "./styles";
 
 export function Home() {
-  const { signOut } = useAuth();
   const [games, setGames] = useState<Game[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const navigation = useAppNavigation();
@@ -46,9 +43,6 @@ export function Home() {
           title="Encontre seu duo!"
           subtitle="Selecione o game que deseja jogar..."
         />
-        <Button onPress={signOut}>
-          <ButtonText>Sair</ButtonText>
-        </Button>
         {isLoading ? (
           <ActivityIndicator />
         ) : (
