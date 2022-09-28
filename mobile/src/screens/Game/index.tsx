@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 import { Ad } from "@@types/Ad";
 import { AppStackParamsList } from "@@types/routes/ParamsList/App";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { RouteProp, useRoute } from "@react-navigation/native";
+import { SupabaseRealtimePayload } from "@supabase/supabase-js";
 
 import { Background } from "@components/Background";
 import { DuoCard } from "@components/DuoCard";
@@ -30,46 +31,45 @@ export function Game() {
   });
 
   useEffect(() => {
-    (async () => {
-      try {
-        const { data } = await supabase
-          .from<Ad>("Ad")
-          .select(
-            `
+    supabase
+      .from<Ad>("Ad")
+      .select(
+        `
             *,
             user:userId (metadata->name)
           `
-          )
-          .eq("gameId", params.id)
-          .order("createdAt", {
-            ascending: true,
-          })
-          .throwOnError();
-        if (data) {
+      )
+      .eq("gameId", params.id)
+      .order("createdAt", {
+        ascending: true,
+      })
+      .then(({ data, error }) => {
+        if (error) {
+          console.error(error);
+          Alert({
+            title: "Erro",
+            message: "Ocorreu um erro ao buscar os anúncios!",
+          });
+        } else if (data) {
           setAds(data);
         }
+      });
+  }, []);
 
-        const realtime = supabase
-          .from<Ad>("Ad")
-          .on("*", (res) => {
-            if (res.eventType === "INSERT") {
-              setAds((state) => [...state, res.new]);
-            }
-          })
-          .subscribe();
-        return () => {
-          realtime.unsubscribe();
-        };
-      } catch (err) {
-        console.error(err);
-        Alert({
-          title: "Erro",
-          message: "Ocorreu um erro ao buscar os anúncios!",
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    })();
+  const realtimeOnInsert = useCallback(
+    (payload: SupabaseRealtimePayload<Ad>) => {},
+    []
+  );
+
+  useEffect(() => {
+    const realtime = supabase
+      .from<Ad>("Ad")
+      .on("INSERT", (payload) => realtimeOnInsert(payload))
+      .subscribe();
+
+    return () => {
+      realtime.unsubscribe();
+    };
   }, [ads]);
 
   return (

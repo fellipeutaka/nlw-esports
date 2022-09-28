@@ -53,38 +53,29 @@ export function Ads() {
     },
   });
 
-  const onInsertAd = useCallback(
-    (payload: SupabaseRealtimePayload<Ad>) => {
-      const game = gameAds.find((game) => game.id === payload.new.gameId);
+  const onInsertAd = useCallback((payload: SupabaseRealtimePayload<Ad>) => {
+    setGameAds((state) => {
+      const newGame = state.find((game) => game.id === payload.new.gameId);
+      newGame?.Ad.push(payload.new);
+      return state.map((gameAds) =>
+        gameAds.id === newGame?.id ? newGame : gameAds
+      );
+    });
+  }, []);
 
-      if (game) {
-        gameAds
-          .find((game) => game.id === payload.new.gameId)
-          ?.Ad.push(payload.new);
-
-        setGameAds((state) =>
-          state.map((gameAds) => (gameAds.id === game.id ? game : gameAds))
-        );
-      }
-    },
-    [gameAds]
-  );
-
-  const onDelete = useCallback(
-    (payload: SupabaseRealtimePayload<Ad>) => {
-      const changedGame = gameAds.find((game) =>
+  const onDelete = useCallback((payload: SupabaseRealtimePayload<Ad>) => {
+    setGameAds((state) => {
+      const changedGame = state.find((game) =>
         game.Ad.find((ad) => ad.id === payload.old.id)
       );
       const changedGameAdIndex =
         changedGame?.Ad.findIndex((ad) => ad.id === payload.old.id) ?? 0;
       changedGame?.Ad.splice(changedGameAdIndex, 1);
-
-      setGameAds((state) =>
-        state.map((game) => (game.id === changedGame?.id ? changedGame : game))
+      return state.map((game) =>
+        game.id === changedGame?.id ? changedGame : game
       );
-    },
-    [gameAds]
-  );
+    });
+  }, []);
 
   useEffect(() => {
     setGameAds(games);

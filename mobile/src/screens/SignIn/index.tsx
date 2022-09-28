@@ -22,16 +22,16 @@ import {
 export function SignIn() {
   async function handleSignIn() {
     try {
-      /* const response = await AuthSession.startAsync({
+      const response = await AuthSession.startAsync({
         authUrl:
-          "https://discord.com/api/oauth2/authorize?client_id=1022813375987728435&redirect_uri=https%3A%2F%2Fauth.expo.io%2F%40fellipeutaka%2Fnlw&response_type=code&scope=identify",
+          "https://discord.com/api/oauth2/authorize?client_id=1022813375987728435&redirect_uri=https%3A%2F%2Fuvupwmceqovhzvsmdyxb.supabase.co%2Fauth%2Fv1%2Fcallback&response_type=token&scope=identify",
       });
 
       if (response.type !== "success") {
         throw response;
       }
 
-      const res = await fetch("https://discord.com/api/oauth2/token", {
+      /* const res = await fetch("https://discord.com/api/oauth2/token", {
         method: "POST",
         headers: { "content-type": "application/x-www-form-urlencoded" },
         body: stringify({
@@ -43,21 +43,17 @@ export function SignIn() {
         }),
       });
 
-      const { refresh_token } = await res.json(); */
+      const { access_token } = await res.json(); */
 
-      const { error } = await supabase.auth.signIn(
-        {
-          provider: "discord",
-        },
-        {
-          scopes: "identity",
-          redirectTo: "https://auth.expo.io/@fellipeutaka/nlw",
-        }
-      );
+      console.log({ accessToken: response.params.access_token });
+
+      /* const { error } = await supabase.auth.signIn({
+        refreshToken: session.refresh_token,
+      });
 
       if (error) {
         throw error;
-      }
+      } */
     } catch (err) {
       console.error(err);
     }

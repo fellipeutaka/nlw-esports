@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 import { Ad } from "@@types/Ad";
 import { GameAd } from "@@types/GameAd";
+import { SupabaseRealtimePayload } from "@supabase/supabase-js";
 
 import logoImg from "@assets/logo-nlw-esports.png";
 import { Background } from "@components/Background";
@@ -20,52 +21,40 @@ export function Home() {
   const navigation = useAppNavigation();
 
   useEffect(() => {
-    (async () => {
-      try {
-        const { data } = await supabase
-          .from<GameAd>("Game")
-          .select("*, Ad(id)")
-          .order("name", {
-            ascending: true,
-          })
-          .throwOnError();
-        if (data) {
+    supabase
+      .from<GameAd>("Game")
+      .select("*, Ad(id)")
+      .order("name", {
+        ascending: true,
+      })
+      .then(({ data, error }) => {
+        if (error) {
+          console.error(error);
+          Alert({
+            title: "Erro",
+            message: "Ocorreu um erro ao buscar os anúncios!",
+          });
+        } else if (data) {
           setGames(data);
         }
-
-        const realtime = supabase
-          .from<Ad>("Ad")
-          .on("*", (res) => {
-            if (res.eventType === "INSERT") {
-              const game = games.find((game) => game.id === res.new.gameId);
-
-              if (game) {
-                games
-                  .find((game) => game.id === res.new.gameId)
-                  ?.Ad.push(res.new);
-
-                setGames((state) =>
-                  state.map((gameAds) =>
-                    gameAds.id === game.id ? game : gameAds
-                  )
-                );
-              }
-            }
-          })
-          .subscribe();
-        return () => {
-          realtime.unsubscribe();
-        };
-      } catch (err) {
-        console.error(err);
-        Alert({
-          title: "Erro",
-          message: "Ocorreu um erro ao buscar os jogos!",
-        });
-      } finally {
         setIsLoading(false);
-      }
-    })();
+      });
+  }, []);
+
+  const realtimeOnInsert = useCallback(
+    (payload: SupabaseRealtimePayload<Ad>) => {},
+    []
+  );
+
+  useEffect(() => {
+    const realtime = supabase
+      .from<Ad>("Ad")
+      .on("INSERT", (payload) => realtimeOnInsert(payload))
+      .subscribe();
+
+    return () => {
+      realtime.unsubscribe();
+    };
   }, [games]);
 
   function handleOpenGame(props: GameAd) {

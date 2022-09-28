@@ -6,11 +6,21 @@ import { Heading as HeadingComponent } from "@components/Heading";
 
 export const Modal = styled.Modal``;
 
+export const OverlayTrigger = styled.TouchableWithoutFeedback``;
+
+export const Overlay = styled.View`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: ${({ theme }) => theme.COLORS.OVERLAY};
+`;
+
 export const Container = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
-  background-color: ${({ theme }) => theme.COLORS.OVERLAY};
 `;
 
 export const Content = styled.View`

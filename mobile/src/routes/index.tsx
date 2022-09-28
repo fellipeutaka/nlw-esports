@@ -8,5 +8,7 @@ import { Auth } from "./Auth.routes";
 export function Routes() {
   const { user } = useAuth();
 
-  return <NavigationContainer>{user ? <App /> : <Auth />}</NavigationContainer>;
+  return (
+    <NavigationContainer>{!user ? <App /> : <Auth />}</NavigationContainer>
+  );
 }

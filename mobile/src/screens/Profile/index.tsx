@@ -12,7 +12,7 @@ export function Profile() {
   const { user } = useAuth();
 
   if (!user) {
-    return null;
+    return <Background>{}</Background>;
   }
 
   async function handleSignOut() {

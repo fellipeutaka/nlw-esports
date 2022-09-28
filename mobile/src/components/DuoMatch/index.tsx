@@ -10,13 +10,15 @@ import {
   CheckIcon,
   CloseButton,
   CloseIcon,
-  Container,
+  Overlay,
   Content,
   Discord,
   DiscordButton,
   Heading,
   Label,
   Modal,
+  OverlayTrigger,
+  Container,
 } from "./styles";
 
 interface DuoMatchProps extends ModalProps {
@@ -50,6 +52,9 @@ export function DuoMatch({ discord, onClose, ...rest }: DuoMatchProps) {
       onRequestClose={onClose}
       {...rest}
     >
+      <OverlayTrigger onPress={onClose}>
+        <Overlay />
+      </OverlayTrigger>
       <Container>
         <Content>
           <CloseButton onPress={onClose}>
