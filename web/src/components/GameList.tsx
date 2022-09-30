@@ -15,7 +15,7 @@ import { GameAd } from "./GameAd";
 
 const adsPerView = 6;
 
-export function Ads() {
+export function GameList() {
   const { games, isFetchingGames } = useGame();
   const [gameAds, setGameAds] = useState<IGameAd[]>(games);
   const [isSliderLoaded, setIsSliderLoaded] = useState(false);
@@ -108,13 +108,7 @@ export function Ads() {
     <div className="relative md:w-full w-3/4">
       <section ref={sliderRef} className="mt-16 keen-slider">
         {gameAds.map((gameAd, index) => (
-          <GameAd
-            key={gameAd.id}
-            index={index}
-            bannerUrl={gameAd.bannerUrl}
-            name={gameAd.name}
-            count={gameAd.Ad.length}
-          />
+          <GameAd key={gameAd.id} data={gameAd} index={index} />
         ))}
       </section>
       {isSliderLoaded && instanceRef.current && (

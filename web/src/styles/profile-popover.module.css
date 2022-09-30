@@ -1,5 +1,5 @@
 .trigger {
-  @apply absolute top-0 right-0 w-16 h-16 rounded-full;
+  @apply absolute top-0 right-0 w-16 h-16 rounded-full transition-opacity duration-300 hover:opacity-60;
 }
 
 .content {

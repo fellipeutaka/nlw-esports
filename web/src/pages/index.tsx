@@ -2,8 +2,8 @@ import { Footer } from "@components/Footer";
 import { Layout } from "@components/Layout";
 import { GameProvider } from "@contexts/GameContext";
 
-import { Ads } from "../components/Ads";
 import { Banner } from "../components/CreateAd/Banner";
+import { GameList } from "../components/GameList";
 import { Header } from "../components/Header";
 
 export default function Home() {
@@ -12,7 +12,7 @@ export default function Home() {
       <GameProvider>
         <main className="max-w-[1344px] mx-auto my-20 flex items-center flex-col relative">
           <Header />
-          <Ads />
+          <GameList />
           <Banner />
         </main>
         <Footer />

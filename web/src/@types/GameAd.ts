@@ -1,8 +1,6 @@
 import { Ad } from "./Ad";
+import { Game } from "./Game";
 
-export interface GameAd {
-  id: string;
-  bannerUrl: string;
-  name: string;
+export interface GameAd extends Game {
   Ad: Ad[];
 }

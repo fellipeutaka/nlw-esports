@@ -1,45 +1,48 @@
+import { GameAd } from "@@types/GameAd";
 import Image from "next/image";
+import Link from "next/link";
+
+import { getBannerPhoto } from "@utils/getBannerPhoto";
 
 import { getAdsCountText } from "../utils/getAdsCountText";
 
 const bannerWidth = "720";
 const bannerHeight = "960";
-
-function getBannerPhoto(url: string) {
-  const imgSrc = url
-    .replace("{width}", bannerWidth)
-    .replace("{height}", bannerHeight);
-  return imgSrc;
-}
-
 interface GameAdProps {
-  bannerUrl: string;
-  name: string;
-  count: number;
+  data: GameAd;
   index: number;
 }
 
-export function GameAd({ bannerUrl, name, count, index }: GameAdProps) {
+export function GameAd({ data, index }: GameAdProps) {
+  const imgSrc = getBannerPhoto({
+    url: data.bannerUrl,
+    width: bannerWidth,
+    height: bannerHeight,
+  });
+
   return (
-    <a
-      href=""
-      className={`relative rounded-lg overflow-hidden hover:opacity-60 transition-opacity duration-300 keen-slider__slide number-slide${
-        index + 1
-      }`}
-    >
-      <Image
-        src={getBannerPhoto(bannerUrl)}
-        alt={name}
-        width={bannerWidth}
-        height={bannerHeight}
-        className="w-[180px] h-60"
-      />
-      <div className="w-full pt-16 pb-4 px-4 bg-game-gradient flex flex-col absolute inset-0 top-auto">
-        <strong className="font-bold md:text-left text-center">{name}</strong>
-        <span className="text-zinc-300 text-sm md:text-left text-center">
-          {getAdsCountText(count)}
-        </span>
-      </div>
-    </a>
+    <Link href={`/games/${data.slug}`}>
+      <a
+        className={`relative rounded-lg overflow-hidden hover:opacity-60 transition-opacity duration-300 keen-slider__slide number-slide${
+          index + 1
+        }`}
+      >
+        <Image
+          src={imgSrc}
+          alt={data.name}
+          width={bannerWidth}
+          height={bannerHeight}
+          className="w-[180px] h-60"
+        />
+        <div className="w-full pt-16 pb-4 px-4 bg-game-gradient flex flex-col absolute inset-0 top-auto">
+          <strong className="font-bold md:text-left text-center">
+            {data.name}
+          </strong>
+          <span className="text-zinc-300 text-sm md:text-left text-center">
+            {getAdsCountText(data.Ad.length)}
+          </span>
+        </div>
+      </a>
+    </Link>
   );
 }
