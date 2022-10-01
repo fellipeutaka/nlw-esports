@@ -145,7 +145,7 @@ export function CreateAdDialog() {
                 {...register("name")}
                 id="name"
                 placeholder="Como te chamam dentro do game?"
-                aria-invalid={Boolean(errors.game)}
+                aria-invalid={Boolean(errors.name)}
               />
               <ErrorMessage message={errors.name?.message} />
             </div>
