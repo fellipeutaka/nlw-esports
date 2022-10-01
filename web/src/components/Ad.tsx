@@ -66,6 +66,10 @@ export function Ad({ data }: AdProps) {
         </span>
       </div>
       <div className="flex flex-col gap-1">
+        <span className="text-zinc-400">Descrição</span>
+        <span className="font-bold">{data.description}</span>
+      </div>
+      <div className="flex flex-col gap-1">
         <span className="text-zinc-400">Chamada de áudio?</span>
         <span
           className={`font-bold ${

@@ -40,7 +40,7 @@ export function ConnectDialog({ discord }: ConnectDialogProps) {
               </span>
               <button
                 onClick={handleCopyDiscord}
-                className="bg-zinc-900 py-3 rounded"
+                className="bg-zinc-900 py-3 rounded outline focus:outline-zinc-900"
               >
                 {discord}
               </button>
