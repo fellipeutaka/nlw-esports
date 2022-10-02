@@ -2,6 +2,7 @@
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import * as Popover from "@radix-ui/react-popover";
 import styles from "@styles/profile-popover.module.css";
+import Link from "next/link";
 import { Megaphone, SignOut, User } from "phosphor-react";
 
 import { useAuth } from "@hooks/useAuth";
@@ -26,20 +27,18 @@ export function ProfilePopover() {
       </Popover.Trigger>
       <Popover.Portal>
         <Popover.Content className={styles.content} align="end" sideOffset={8}>
-          <a
-            href="/me"
-            className="flex items-center px-6 pt-4 pb-3 hover:opacity-60 transition-opacity duration-300"
-          >
-            <User size={24} className="text-violet-500" />
-            <span className="ml-4">Meu perfil</span>
-          </a>
-          <a
-            href="/me"
-            className="flex items-center px-6 py-3 hover:opacity-60 transition-opacity duration-300"
-          >
-            <Megaphone size={24} className="text-violet-500 -scale-x-100" />
-            <span className="ml-4">Meus anúncios</span>
-          </a>
+          <Link href={`/${user.user_metadata.full_name.toLowerCase()}`}>
+            <a className="flex items-center px-6 pt-4 pb-3 hover:opacity-60 transition-opacity duration-300">
+              <User size={24} className="text-violet-500" />
+              <span className="ml-4">Meu perfil</span>
+            </a>
+          </Link>
+          <Link href={`/${user.user_metadata.full_name.toLowerCase()}/ads`}>
+            <a className="flex items-center px-6 py-3 hover:opacity-60 transition-opacity duration-300">
+              <Megaphone size={24} className="text-violet-500 -scale-x-100" />
+              <span className="ml-4">Meus anúncios</span>
+            </a>
+          </Link>
           <AlertDialog.Root>
             <AlertDialog.Trigger className="flex items-center px-6 py-3 hover:opacity-60 transition-opacity duration-300">
               <SignOut size={24} className="text-violet-500" />

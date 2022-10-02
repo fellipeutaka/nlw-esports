@@ -8,7 +8,7 @@ interface LayoutProps {
   children: ReactNode;
 }
 
-export function Layout({ title, description, children }: LayoutProps) {
+export function SEO({ title, description, children }: LayoutProps) {
   return (
     <>
       <Head>

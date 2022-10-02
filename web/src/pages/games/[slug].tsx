@@ -11,7 +11,7 @@ import sadAnimation from "@assets/sad.json";
 import { Ad } from "@components/Ad";
 import { Footer } from "@components/Footer";
 import { Header } from "@components/Header";
-import { Layout } from "@components/Layout";
+import { SEO } from "@components/SEO";
 import { supabase } from "@lib/supabase";
 import { getBannerPhoto } from "@utils/getBannerPhoto";
 
@@ -36,7 +36,7 @@ export default function Games({ game, ads }: GameProps) {
       try {
         const userResponse = await supabase
           .from("User")
-          .select("metadata->name")
+          .select("name")
           .eq("id", payload.new.userId)
           .throwOnError();
         if (!userResponse.data) {
@@ -86,7 +86,7 @@ export default function Games({ game, ads }: GameProps) {
   }, [onInsertAd, onUpdateAd, onDeleteAd]);
 
   return (
-    <Layout title={`${game.name} | NLW eSports`} description="Find Your Duo">
+    <SEO title={`${game.name} | NLW eSports`} description="Find Your Duo">
       <main className="max-w-[1344px] mx-auto px-8 my-20 flex items-center flex-col relative gap-2">
         <Header title={game.name} />
         <h2 className="text-zinc-400 text-xl">Conecte-se e comece a jogar!</h2>
@@ -97,6 +97,7 @@ export default function Games({ game, ads }: GameProps) {
           width={bannerWidth}
           height={bannerHeight}
           draggable="false"
+          priority
           className="rounded-lg"
         />
         {gameAds.length === 0 ? (
@@ -117,7 +118,7 @@ export default function Games({ game, ads }: GameProps) {
         )}
       </main>
       <Footer />
-    </Layout>
+    </SEO>
   );
 }
 
@@ -145,7 +146,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       .select(
         `
       *,
-      user:userId (metadata->name)
+      user:userId (name)
     `
       )
       .eq("gameId", gameResponse.data[0].id)

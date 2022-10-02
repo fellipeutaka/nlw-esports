@@ -1,5 +1,5 @@
 import { Footer } from "@components/Footer";
-import { Layout } from "@components/Layout";
+import { SEO } from "@components/SEO";
 import { GameProvider } from "@contexts/GameContext";
 
 import { Banner } from "../components/CreateAd/Banner";
@@ -8,7 +8,7 @@ import { Header } from "../components/Header";
 
 export default function Home() {
   return (
-    <Layout title="NLW eSports" description="Find Your Duo">
+    <SEO title="NLW eSports" description="Find Your Duo">
       <GameProvider>
         <main className="max-w-[1344px] mx-auto my-20 flex items-center flex-col relative">
           <Header />
@@ -17,6 +17,6 @@ export default function Home() {
         </main>
         <Footer />
       </GameProvider>
-    </Layout>
+    </SEO>
   );
 }

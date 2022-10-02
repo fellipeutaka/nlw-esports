@@ -1,16 +1,16 @@
-import { Ad } from "@@types/Ad";
+import { SupabaseAd } from "@@types/Ad";
 
 import { displayHours } from "@utils/displayHours";
 import { displayWeekDays } from "@utils/displayWeekDays";
 import { displayYearsPlaying } from "@utils/displayYearsPlaying";
 
-import { ConnectDialog } from "./Dialogs/ConnectDialog";
+import { DeleteAdDialog } from "./Dialogs/DeleteAdDialog";
 
-interface AdProps {
-  data: Ad;
+interface MyAdProps {
+  data: SupabaseAd;
 }
 
-export function Ad({ data }: AdProps) {
+export function MyAd({ data }: MyAdProps) {
   return (
     <div className="rounded-lg flex flex-col justify-center bg-[#2A2634] p-5 w-64 gap-4">
       <div className="flex flex-col gap-1">
@@ -44,7 +44,7 @@ export function Ad({ data }: AdProps) {
           {data.useVoiceChannel ? "Sim" : "Não"}
         </span>
       </div>
-      <ConnectDialog discord={data.user.name} />
+      <DeleteAdDialog adId={data.id} />
     </div>
   );
 }

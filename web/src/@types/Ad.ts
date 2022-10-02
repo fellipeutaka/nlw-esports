@@ -4,8 +4,8 @@ export interface SupabaseAd {
   description: string;
   weekDays: number[];
   yearsPlaying: number;
-  hourEnd: number;
   hourStart: number;
+  hourEnd: number;
   useVoiceChannel: boolean;
   userId: string;
   gameId: string;
