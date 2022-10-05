@@ -1,18 +1,23 @@
-import { SupabaseAd } from "@@types/Ad";
+import { MyAds } from "@@types/Ad";
 
 import { displayHours } from "@utils/displayHours";
 import { displayWeekDays } from "@utils/displayWeekDays";
 import { displayYearsPlaying } from "@utils/displayYearsPlaying";
 
 import { DeleteAdDialog } from "./Dialogs/DeleteAdDialog";
+import { EditAdDialog } from "./Dialogs/EditAdDialog";
 
 interface MyAdProps {
-  data: SupabaseAd;
+  data: MyAds;
 }
 
 export function MyAd({ data }: MyAdProps) {
   return (
-    <div className="rounded-lg flex flex-col justify-center bg-[#2A2634] p-5 w-64 gap-4">
+    <div className="rounded-lg grid grid-cols-2 justify-center bg-[#2A2634] p-5 w-96 gap-4">
+      <div className="flex flex-col gap-1">
+        <span className="text-zinc-400">Jogo</span>
+        <span className="font-bold">{data.game.name}</span>
+      </div>
       <div className="flex flex-col gap-1">
         <span className="text-zinc-400">Nome</span>
         <span className="font-bold">{data.name}</span>
@@ -44,6 +49,7 @@ export function MyAd({ data }: MyAdProps) {
           {data.useVoiceChannel ? "Sim" : "Não"}
         </span>
       </div>
+      <EditAdDialog data={data} />
       <DeleteAdDialog adId={data.id} />
     </div>
   );

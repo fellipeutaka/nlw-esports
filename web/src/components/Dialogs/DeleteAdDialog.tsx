@@ -22,7 +22,7 @@ export function DeleteAdDialog({ adId }: DeleteAdDialogProps) {
 
   return (
     <AlertDialog.Root>
-      <AlertDialog.Trigger className="flex items-center justify-center mt-auto py-3 rounded-md gap-2 bg-red-600 hover:bg-red-700 font-semibold outline focus:outline-red-600">
+      <AlertDialog.Trigger className="flex items-center justify-center mt-auto py-3 col-span-2 rounded-md gap-2 bg-red-600 hover:bg-red-700 font-semibold outline focus:outline-red-600">
         <Trash size={24} />
         <span>Excluir</span>
       </AlertDialog.Trigger>

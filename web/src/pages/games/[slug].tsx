@@ -4,7 +4,7 @@ import { Ad as IAd } from "@@types/Ad";
 import { Game } from "@@types/Game";
 import { SupabaseRealtimePayload } from "@supabase/supabase-js";
 import Lottie from "lottie-react";
-import { GetServerSideProps } from "next";
+import { GetStaticPaths, GetStaticProps } from "next";
 import Image from "next/image";
 
 import sadAnimation from "@assets/sad.json";
@@ -73,6 +73,19 @@ export default function Games({ game, ads }: GameProps) {
   }, []);
 
   useEffect(() => {
+    supabase
+      .from<IAd>("Ad")
+      .select(
+        `
+    *,
+    user:userId (name)
+  `
+      )
+      .eq("gameId", game.id)
+      .then(({ data }) => setGameAds(data ?? []));
+  }, [game.id]);
+
+  useEffect(() => {
     const realtime = supabase
       .from<IAd>("Ad")
       .on("INSERT", (payload) => onInsertAd(payload))
@@ -89,7 +102,9 @@ export default function Games({ game, ads }: GameProps) {
     <SEO title={`${game.name} | NLW eSports`} description="Find Your Duo">
       <main className="max-w-[1344px] mx-auto px-8 my-20 flex items-center flex-col relative gap-2">
         <Header title={game.name} />
-        <h2 className="text-zinc-400 text-xl">Conecte-se e comece a jogar!</h2>
+        <h2 className="text-zinc-400 text-xl text-center">
+          Conecte-se e comece a jogar!
+        </h2>
         <Image
           src={imgSrc}
           alt={game.name}
@@ -110,7 +125,7 @@ export default function Games({ game, ads }: GameProps) {
             />
           </section>
         ) : (
-          <section className="grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 grid-cols-1 px-8 gap-8 mt-8">
+          <section className="grid justify-items-center xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-8 mt-8">
             {gameAds.map((ad) => (
               <Ad data={ad} key={ad.id} />
             ))}
@@ -122,9 +137,9 @@ export default function Games({ game, ads }: GameProps) {
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
+export const getStaticProps: GetStaticProps = async (ctx) => {
   try {
-    const gameSlug = String(ctx.query.slug);
+    const gameSlug = String(ctx.params?.slug);
     const gameResponse = await supabase
       .from<Game>("Game")
       .select("*")
@@ -153,6 +168,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       .throwOnError();
 
     return {
+      revalidate: 60 * 1, // 1 minute
       props: {
         game: gameResponse.data[0],
         ads: adResponse.data,
@@ -166,6 +182,31 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
         permanent: false,
       },
       notFound: true,
+    };
+  }
+};
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  try {
+    const { data: games } = await supabase
+      .from<Game>("Game")
+      .select("*")
+      .throwOnError();
+
+    const paths =
+      games?.map((game) => ({
+        params: { slug: game.slug },
+      })) ?? [];
+
+    return {
+      fallback: "blocking",
+      paths,
+    };
+  } catch (err) {
+    console.error(err);
+    return {
+      paths: [],
+      fallback: "blocking",
     };
   }
 };

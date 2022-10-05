@@ -1,3 +1,5 @@
+import type { Game } from "./Game";
+
 export interface SupabaseAd {
   id: string;
   name: string;
@@ -16,4 +18,8 @@ export interface Ad extends SupabaseAd {
   user: {
     name: string;
   };
+}
+
+export interface MyAds extends SupabaseAd {
+  game: Game;
 }

@@ -1,7 +1,7 @@
-import { SupabaseAd } from "@@types/Ad";
+import { MyAds as IMyAds } from "@@types/Ad";
 import { User } from "@@types/User";
 import Lottie from "lottie-react";
-import { GetServerSideProps } from "next";
+import { GetStaticPaths, GetStaticProps } from "next";
 
 import sadAnimation from "@assets/sad.json";
 import { Header } from "@components/Header";
@@ -11,10 +11,42 @@ import { supabase } from "@lib/supabase";
 
 interface MyAdsProps {
   user: User;
-  ads: SupabaseAd[];
+  ads: IMyAds[];
 }
 
 export default function MyAds({ user, ads }: MyAdsProps) {
+  const currentUser = supabase.auth.user();
+  if (user.id !== currentUser?.id) {
+    return (
+      <SEO
+        title={`Anúncios de ${user.fullName} | NLW eSports`}
+        description="Meus anúncios"
+      >
+        <main className="max-w-[1344px] mx-auto px-8 my-20 flex items-center flex-col relative gap-2">
+          <Header title={`Anúncios de ${user.fullName}`} />
+          {ads.length === 0 ? (
+            <section className="flex flex-col mt-6 px-8">
+              <span className="text-xl font-bold">
+                Nenhum anúncio no momento
+              </span>
+              <Lottie
+                animationData={sadAnimation}
+                loop
+                className="w-full h-[25vh]"
+              />
+            </section>
+          ) : (
+            <section className="grid justify-items-center xl:grid-cols-3 lg:grid-cols-2 grid-cols-1 gap-8 mt-8">
+              {ads.map((ad) => (
+                <MyAd data={ad} key={ad.id} />
+              ))}
+            </section>
+          )}
+        </main>
+      </SEO>
+    );
+  }
+
   return (
     <SEO title="Meus anúncios | NLW eSports" description="Meus anúncios">
       <main className="max-w-[1344px] mx-auto px-8 my-20 flex items-center flex-col relative gap-2">
@@ -29,7 +61,7 @@ export default function MyAds({ user, ads }: MyAdsProps) {
             />
           </section>
         ) : (
-          <section className="grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 grid-cols-1 px-8 gap-8 mt-8">
+          <section className="grid justify-items-center xl:grid-cols-3 lg:grid-cols-2 grid-cols-1 gap-8 mt-8">
             {ads.map((ad) => (
               <MyAd data={ad} key={ad.id} />
             ))}
@@ -40,9 +72,9 @@ export default function MyAds({ user, ads }: MyAdsProps) {
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
+export const getStaticProps: GetStaticProps = async (ctx) => {
   try {
-    const username = String(ctx.query.username);
+    const username = String(ctx.params?.username);
     const userResponse = await supabase
       .from<User>("User")
       .select("*")
@@ -62,12 +94,18 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     const user = userResponse.data[0];
 
     const adsResponse = await supabase
-      .from<SupabaseAd>("Ad")
-      .select("*")
+      .from<IMyAds>("Ad")
+      .select(
+        `
+        *,
+        game:gameId (name)
+      `
+      )
       .eq("userId", user.id)
       .throwOnError();
 
     return {
+      revalidate: 60 * 1, // 1 minute
       props: {
         user,
         ads: adsResponse.data,
@@ -81,6 +119,31 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
         permanent: false,
       },
       notFound: true,
+    };
+  }
+};
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  try {
+    const { data: users } = await supabase
+      .from<User>("User")
+      .select("*")
+      .throwOnError();
+
+    const paths =
+      users?.map((user) => ({
+        params: { username: user.username },
+      })) ?? [];
+
+    return {
+      fallback: "blocking",
+      paths,
+    };
+  } catch (err) {
+    console.error(err);
+    return {
+      paths: [],
+      fallback: "blocking",
     };
   }
 };

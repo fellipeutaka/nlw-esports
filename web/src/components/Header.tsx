@@ -21,11 +21,11 @@ export function Header({ title }: HeaderProps) {
           />
         </a>
       </Link>
-      <h1 className="text-3xl xl:text-6xl lg:text-5xl md:text-4xl font-black mt-20">
+      <h1 className="text-3xl xl:text-6xl lg:text-5xl md:text-4xl font-black text-center mt-20">
         {title ?? (
           <>
             Seu{" "}
-            <span className="text-transparent bg-nlw-gradient bg-clip-text">
+            <span className="text-transparent text-center bg-nlw-gradient bg-clip-text">
               duo
             </span>{" "}
             está aqui.
