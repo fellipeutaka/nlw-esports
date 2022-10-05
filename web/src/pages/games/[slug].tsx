@@ -5,7 +5,7 @@ import { Game } from "@@types/Game";
 import { SupabaseRealtimePayload } from "@supabase/supabase-js";
 import Lottie from "lottie-react";
 import { GetStaticPaths, GetStaticProps } from "next";
-import Image from "next/image";
+import Image from "next/future/image";
 
 import sadAnimation from "@assets/sad.json";
 import { Ad } from "@components/Ad";

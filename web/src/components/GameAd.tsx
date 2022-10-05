@@ -1,5 +1,5 @@
 import { GameAd } from "@@types/GameAd";
-import Image from "next/image";
+import Image from "next/future/image";
 import Link from "next/link";
 
 import { getBannerPhoto } from "@utils/getBannerPhoto";
@@ -32,7 +32,6 @@ export function GameAd({ data, index }: GameAdProps) {
           alt={data.name}
           width={bannerWidth}
           height={bannerHeight}
-          className="w-[180px] h-60"
         />
         <div className="w-full pt-16 pb-4 px-4 bg-game-gradient flex flex-col absolute inset-0 top-auto">
           <strong className="font-bold md:text-left text-center">
