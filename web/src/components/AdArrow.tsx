@@ -14,6 +14,7 @@ export function AdArrow(props: AdArrowProps) {
         props.left ? "md:-left-20 -left-14" : "md:-right-20 -right-12"
       } ${props.disabled ? "text-zinc-500 cursor-not-allowed" : "text-white"}`}
       disabled={props.disabled}
+      aria-label={props.left ? "Previous" : "Next"}
     >
       {props.left ? (
         <CaretLeft size={48} fill="currentColor" />
