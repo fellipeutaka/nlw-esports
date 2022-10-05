@@ -4,9 +4,11 @@ import Lottie from "lottie-react";
 import { GetStaticPaths, GetStaticProps } from "next";
 
 import sadAnimation from "@assets/sad.json";
+import { Ad } from "@components/Ad";
 import { Header } from "@components/Header";
 import { MyAd } from "@components/MyAd";
 import { SEO } from "@components/SEO";
+import { useAuth } from "@hooks/useAuth";
 import { supabase } from "@lib/supabase";
 
 interface MyAdsProps {
@@ -15,12 +17,13 @@ interface MyAdsProps {
 }
 
 export default function MyAds({ user, ads }: MyAdsProps) {
-  const currentUser = supabase.auth.user();
+  const { user: currentUser } = useAuth();
+
   if (user.id !== currentUser?.id) {
     return (
       <SEO
         title={`Anúncios de ${user.fullName} | NLW eSports`}
-        description="Meus anúncios"
+        description={`Anúncios de ${user.fullName}`}
       >
         <main className="max-w-[1344px] mx-auto px-8 my-20 flex items-center flex-col relative gap-2">
           <Header title={`Anúncios de ${user.fullName}`} />
@@ -38,7 +41,7 @@ export default function MyAds({ user, ads }: MyAdsProps) {
           ) : (
             <section className="grid justify-items-center xl:grid-cols-3 lg:grid-cols-2 grid-cols-1 gap-8 mt-8">
               {ads.map((ad) => (
-                <MyAd data={ad} key={ad.id} />
+                <Ad data={{ ...ad, user }} key={ad.id} />
               ))}
             </section>
           )}
