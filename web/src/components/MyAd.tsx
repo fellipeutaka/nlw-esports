@@ -49,7 +49,7 @@ export function MyAd({ data }: MyAdProps) {
           {data.useVoiceChannel ? "Sim" : "Não"}
         </span>
       </div>
-      <EditAdDialog data={data} />
+      <EditAdDialog currentAd={data} />
       <DeleteAdDialog adId={data.id} />
     </div>
   );

@@ -1,5 +1,8 @@
+import { useCallback, useEffect, useState } from "react";
+
 import { MyAds as IMyAds } from "@@types/Ad";
 import { User } from "@@types/User";
+import { SupabaseRealtimePayload } from "@supabase/supabase-js";
 import Lottie from "lottie-react";
 import { GetStaticPaths, GetStaticProps } from "next";
 
@@ -8,6 +11,7 @@ import { Ad } from "@components/Ad";
 import { Header } from "@components/Header";
 import { MyAd } from "@components/MyAd";
 import { SEO } from "@components/SEO";
+import { GameProvider } from "@contexts/GameContext";
 import { useAuth } from "@hooks/useAuth";
 import { supabase } from "@lib/supabase";
 
@@ -16,8 +20,46 @@ interface MyAdsProps {
   ads: IMyAds[];
 }
 
-export default function MyAds({ user, ads }: MyAdsProps) {
+export default function MyAds({ user, ads: staticAds }: MyAdsProps) {
+  const [ads, setAds] = useState(staticAds);
   const { user: currentUser } = useAuth();
+
+  const onInsertAd = useCallback((payload: SupabaseRealtimePayload<IMyAds>) => {
+    const newAd = {
+      ...payload.new,
+    };
+    setAds((state) => [...state, newAd]);
+  }, []);
+
+  const onUpdateAd = useCallback((payload: SupabaseRealtimePayload<IMyAds>) => {
+    setAds((state) => {
+      const target = state.find((ad) => ad.id === payload.old.id);
+      const editedAd = {
+        ...target,
+        ...payload.new,
+      };
+      return state.map((ad) => (ad.id === editedAd.id ? editedAd : ad));
+    });
+  }, []);
+
+  const onDeleteAd = useCallback((payload: SupabaseRealtimePayload<IMyAds>) => {
+    setAds((state) => {
+      return state.filter((ad) => ad.id !== payload.old.id);
+    });
+  }, []);
+
+  useEffect(() => {
+    const realtime = supabase
+      .from<IMyAds>("Ad")
+      .on("INSERT", (payload) => onInsertAd(payload))
+      .on("UPDATE", (payload) => onUpdateAd(payload))
+      .on("DELETE", (payload) => onDeleteAd(payload))
+      .subscribe();
+
+    return () => {
+      realtime.unsubscribe();
+    };
+  }, [onInsertAd, onUpdateAd, onDeleteAd]);
 
   if (user.id !== currentUser?.id) {
     return (
@@ -64,11 +106,13 @@ export default function MyAds({ user, ads }: MyAdsProps) {
             />
           </section>
         ) : (
-          <section className="grid justify-items-center xl:grid-cols-3 lg:grid-cols-2 grid-cols-1 gap-8 mt-8">
-            {ads.map((ad) => (
-              <MyAd data={ad} key={ad.id} />
-            ))}
-          </section>
+          <GameProvider>
+            <section className="grid justify-items-center xl:grid-cols-3 lg:grid-cols-2 grid-cols-1 gap-8 mt-8">
+              {ads.map((ad) => (
+                <MyAd data={ad} key={ad.id} />
+              ))}
+            </section>
+          </GameProvider>
         )}
       </main>
     </SEO>
@@ -101,10 +145,13 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
       .select(
         `
         *,
-        game:gameId (name)
+        game:gameId (id, name)
       `
       )
       .eq("userId", user.id)
+      .order("createdAt", {
+        ascending: true,
+      })
       .throwOnError();
 
     return {

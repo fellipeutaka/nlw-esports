@@ -7,7 +7,7 @@ import * as Checkbox from "@radix-ui/react-checkbox";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import * as SelectPrimitive from "@radix-ui/react-select";
 import { Root as ToggleGroup } from "@radix-ui/react-toggle-group";
-import { CaretDown, Check, GameController, Pencil } from "phosphor-react";
+import { CaretDown, Check, Pencil, UploadSimple } from "phosphor-react";
 
 import { ErrorMessage } from "@components/Form/ErrorMessage";
 import { Select } from "@components/Form/Select";
@@ -33,10 +33,10 @@ export interface Fields {
 }
 
 interface EditAdDialogProps {
-  data: MyAds;
+  currentAd: MyAds;
 }
 
-export function EditAdDialog({ data }: EditAdDialogProps) {
+export function EditAdDialog({ currentAd }: EditAdDialogProps) {
   const { user } = useAuth();
 
   const {
@@ -50,19 +50,19 @@ export function EditAdDialog({ data }: EditAdDialogProps) {
   } = useForm<Fields>({
     mode: "onBlur",
     defaultValues: {
-      game: data.gameId,
-      name: data.name,
-      yearsPlaying: data.yearsPlaying,
-      description: data.description,
-      hourStart: convertMinutesToHourString(data.hourStart),
-      hourEnd: convertMinutesToHourString(data.hourEnd),
-      weekDays: data.weekDays,
-      useVoiceChannel: data.useVoiceChannel,
+      game: currentAd.gameId,
+      name: currentAd.name,
+      yearsPlaying: currentAd.yearsPlaying,
+      description: currentAd.description,
+      hourStart: convertMinutesToHourString(currentAd.hourStart),
+      hourEnd: convertMinutesToHourString(currentAd.hourEnd),
+      weekDays: currentAd.weekDays,
+      useVoiceChannel: currentAd.useVoiceChannel,
     },
     resolver: zodResolver(adSchema),
   });
 
-  const createAd: SubmitHandler<Fields> = async (data) => {
+  const updateAd: SubmitHandler<Fields> = async (data) => {
     const hourStartInMinutes = convertHourStringToMinutes(data.hourStart);
     const hourEndInMinutes = convertHourStringToMinutes(data.hourEnd);
 
@@ -76,22 +76,23 @@ export function EditAdDialog({ data }: EditAdDialogProps) {
     try {
       await supabase
         .from<SupabaseAd>("Ad")
-        .insert({
+        .update({
           name: data.name,
           description: data.description,
           weekDays: data.weekDays,
           yearsPlaying: data.yearsPlaying,
-          hourEnd: hourStartInMinutes,
-          hourStart: hourEndInMinutes,
+          hourStart: hourStartInMinutes,
+          hourEnd: hourEndInMinutes,
           useVoiceChannel: data.useVoiceChannel,
           userId: user?.id,
           gameId: data.game,
         })
+        .match({ id: currentAd.id })
         .throwOnError();
       reset();
       //  Close dialog
       document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
-      toast.success("Seu anúncio foi criado com sucesso!");
+      toast.success("Seu anúncio foi alterado com sucesso!");
     } catch (err) {
       toast.error("Ocorreu um erro! Tente novamente mais tarde.");
       console.error(err);
@@ -112,15 +113,18 @@ export function EditAdDialog({ data }: EditAdDialogProps) {
           </DialogPrimitive.Title>
           <form
             className="flex flex-col gap-4 md:mt-8 mt-4"
-            onSubmit={handleSubmit(createAd)}
+            onSubmit={handleSubmit(updateAd)}
           >
             <div className="flex flex-col gap-2">
               <Label htmlFor="game">Qual o game?</Label>
               <Controller
                 name="game"
                 control={control}
-                render={({ field: { onBlur, onChange, ref } }) => (
-                  <SelectPrimitive.Root onValueChange={onChange}>
+                render={({ field: { onBlur, onChange, ref, value } }) => (
+                  <SelectPrimitive.Root
+                    onValueChange={onChange}
+                    defaultValue={value}
+                  >
                     <SelectPrimitive.Trigger
                       id="game"
                       className="flex items-center justify-between bg-zinc-900 py-3 px-4 rounded text-sm outline focus:outline-violet-500"
@@ -280,6 +284,7 @@ export function EditAdDialog({ data }: EditAdDialogProps) {
               <Checkbox.Checkbox
                 className="bg-zinc-900 w-6 h-6 p-1 rounded transition-all duration-300 outline-none focus:outline-offset-1 focus:outline-violet-500"
                 id="useVoiceChannel"
+                defaultChecked={currentAd.useVoiceChannel}
                 onCheckedChange={(e) => setValue("useVoiceChannel", Boolean(e))}
               >
                 <Checkbox.Indicator>
@@ -298,8 +303,8 @@ export function EditAdDialog({ data }: EditAdDialogProps) {
                 type="submit"
                 className="flex items-center font-semibold gap-3 bg-violet-500 rounded-md py-3 px-5 hover:bg-violet-600 outline focus:outline-violet-500"
               >
-                <GameController size={24} />
-                Encontrar duo
+                <UploadSimple size={24} />
+                Atualizar anúncio
               </button>
             </div>
           </form>
