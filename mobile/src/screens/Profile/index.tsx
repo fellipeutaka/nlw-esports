@@ -1,6 +1,7 @@
 import { SignOut } from "phosphor-react-native";
 
 import { Background } from "@components/Background";
+import { SubTitle } from "@components/SubTitle";
 import { Title } from "@components/Title";
 import { useAuth } from "@hooks/useAuth";
 import { supabase } from "@lib/supabase";
@@ -30,6 +31,7 @@ export function Profile() {
     <Background>
       <Container>
         <Title text="Meus anúncios" />
+        <SubTitle text={`Hello ${user.user_metadata.full_name}`} />
         <Button onPress={handleSignOut}>
           <SignOut size={24} color="white" />
           <ButtonText>Sair</ButtonText>

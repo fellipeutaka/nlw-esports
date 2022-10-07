@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 
 import { Ad } from "@@types/Ad";
 import { AppStackParamsList } from "@@types/routes/ParamsList/App";
@@ -12,7 +12,6 @@ import { DuoMatch } from "@components/DuoMatch";
 import { Heading } from "@components/Heading";
 import { supabase } from "@lib/supabase";
 import { ActivityIndicator } from "@screens/Loading/styles";
-import { Alert } from "@utils/alert";
 import { getBannerPhoto } from "@utils/getBannerPhoto";
 
 import { AdList, Container, HeroImage } from "./styles";
@@ -20,44 +19,91 @@ import { AdList, Container, HeroImage } from "./styles";
 export function Game() {
   const [ads, setAds] = useState<Ad[]>([]);
   const [discordSelected, setDiscordSelected] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const { params } = useRoute<RouteProp<AppStackParamsList, "Game">>();
   const headerHeight = useHeaderHeight();
 
-  const imgSrc = getBannerPhoto({
-    url: params.bannerUrl,
-    width: 480,
-    height: 640,
-  });
+  const imgSrc = useMemo(
+    () =>
+      getBannerPhoto({
+        url: params.bannerUrl,
+        width: 480,
+        height: 640,
+      }),
+    []
+  );
+
+  const fetchAds = useCallback(async () => {
+    try {
+      const { data } = await supabase
+        .from<Ad>("Ad")
+        .select(
+          `
+            *,
+            user:userId (name)
+          `
+        )
+        .eq("gameId", params.id)
+        .order("createdAt", {
+          ascending: true,
+        })
+        .throwOnError();
+      setAds(data ?? []);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    supabase
-      .from<Ad>("Ad")
-      .select(
-        `
-            *,
-            user:userId (metadata->name)
-          `
-      )
-      .eq("gameId", params.id)
-      .order("createdAt", {
-        ascending: true,
-      })
-      .then(({ data, error }) => {
-        if (error) {
-          console.error(error);
-          Alert({
-            title: "Erro",
-            message: "Ocorreu um erro ao buscar os anúncios!",
-          });
-        } else if (data) {
-          setAds(data);
-        }
-      });
+    fetchAds();
   }, []);
 
   const realtimeOnInsert = useCallback(
-    (payload: SupabaseRealtimePayload<Ad>) => {},
+    async (payload: SupabaseRealtimePayload<Ad>) => {
+      try {
+        const userResponse = await supabase
+          .from("User")
+          .select("name")
+          .eq("id", payload.new.userId)
+          .throwOnError();
+        if (!userResponse.data) {
+          throw userResponse;
+        }
+
+        const newAd = {
+          ...payload.new,
+          user: userResponse.data[0],
+        };
+        setAds((state) => [...state, newAd]);
+      } catch (err) {
+        console.error(err);
+      }
+    },
+    []
+  );
+
+  const realtimeOnUpdateAd = useCallback(
+    (payload: SupabaseRealtimePayload<Ad>) => {
+      setAds((state) => {
+        const target = state.find((ad) => ad.id === payload.old.id);
+        const editedAd = {
+          ...target,
+          ...payload.new,
+        };
+        return state.map((ad) => (ad.id === editedAd.id ? editedAd : ad));
+      });
+    },
+    []
+  );
+
+  const realtimeOnDeleteAd = useCallback(
+    (payload: SupabaseRealtimePayload<Ad>) => {
+      setAds((state) => {
+        return state.filter((ad) => ad.id !== payload.old.id);
+      });
+    },
     []
   );
 
@@ -65,6 +111,8 @@ export function Game() {
     const realtime = supabase
       .from<Ad>("Ad")
       .on("INSERT", (payload) => realtimeOnInsert(payload))
+      .on("UPDATE", (payload) => realtimeOnUpdateAd(payload))
+      .on("DELETE", (payload) => realtimeOnDeleteAd(payload))
       .subscribe();
 
     return () => {
@@ -95,6 +143,7 @@ export function Game() {
           discord={discordSelected}
           visible={discordSelected.length > 0}
           onClose={() => setDiscordSelected("")}
+          hardwareAccelerated
         />
       </Container>
     </Background>
