@@ -1,10 +1,9 @@
+import { Banner } from "@components/CreateAd/Banner";
 import { Footer } from "@components/Footer";
+import { GameList } from "@components/GameList";
+import { Header } from "@components/Header";
 import { SEO } from "@components/SEO";
 import { GameProvider } from "@contexts/GameContext";
-
-import { Banner } from "../components/CreateAd/Banner";
-import { GameList } from "../components/GameList";
-import { Header } from "../components/Header";
 
 export default function Home() {
   return (

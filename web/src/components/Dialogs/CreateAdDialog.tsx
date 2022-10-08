@@ -1,7 +1,7 @@
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { toast } from "react-toastify";
 
-import { SupabaseAd } from "@@types/Ad";
+import type { SupabaseAd } from "@@types/Ad";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as Checkbox from "@radix-ui/react-checkbox";
 import * as DialogPrimitive from "@radix-ui/react-dialog";

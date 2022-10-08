@@ -1,4 +1,4 @@
-import { MyAds } from "@@types/Ad";
+import type { MyAds } from "@@types/Ad";
 
 import { displayHours } from "@utils/displayHours";
 import { displayWeekDays } from "@utils/displayWeekDays";

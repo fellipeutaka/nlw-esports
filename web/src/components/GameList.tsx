@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 
-import { Ad } from "@@types/Ad";
-import { GameAd as IGameAd } from "@@types/GameAd";
-import { SupabaseRealtimePayload } from "@supabase/supabase-js";
+import type { Ad } from "@@types/Ad";
+import type { GameAd as IGameAd } from "@@types/GameAd";
+import type { SupabaseRealtimePayload } from "@supabase/supabase-js";
 import { useKeenSlider } from "keen-slider/react";
 import Lottie from "lottie-react";
 

@@ -1,7 +1,7 @@
 import { createContext, ReactNode, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
-import { GameAd } from "@@types/GameAd";
+import type { GameAd } from "@@types/GameAd";
 
 import { supabase } from "@lib/supabase";
 

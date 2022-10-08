@@ -79,7 +79,7 @@ export default function MyAds({ user, ads: staticAds }: MyAdsProps) {
 
   const onDeleteAd = useCallback(
     (payload: SupabaseRealtimePayload<IMyAds>) => {
-      if (payload.new.userId === user.id) {
+      if (payload.old.userId === user.id) {
         setAds((state) => {
           return state.filter((ad) => ad.id !== payload.old.id);
         });

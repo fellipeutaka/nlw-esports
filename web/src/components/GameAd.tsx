@@ -1,10 +1,9 @@
-import { GameAd } from "@@types/GameAd";
+import type { GameAd } from "@@types/GameAd";
 import Image from "next/future/image";
 import Link from "next/link";
 
+import { getAdsCountText } from "@utils/getAdsCountText";
 import { getBannerPhoto } from "@utils/getBannerPhoto";
-
-import { getAdsCountText } from "../utils/getAdsCountText";
 
 const bannerWidth = "720";
 const bannerHeight = "960";

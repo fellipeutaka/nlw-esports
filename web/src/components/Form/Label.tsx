@@ -1,4 +1,4 @@
-import { HTMLProps } from "react";
+import type { HTMLProps } from "react";
 
 interface LabelProps extends HTMLProps<HTMLLabelElement> {}
 
