@@ -12,8 +12,10 @@ import { CaretDown, Check, Pencil, UploadSimple } from "phosphor-react";
 import { ErrorMessage } from "@components/Form/ErrorMessage";
 import { Select } from "@components/Form/Select";
 import { useAuth } from "@hooks/useAuth";
+import { useGame } from "@hooks/useGame";
 import { supabase } from "@lib/supabase";
 import { adSchema } from "@utils/adSchema";
+import { checkIfYearsPlayingIsGreaterThanGameReleaseDate } from "@utils/checkIfYearsPlayingIsGreaterThanGameReleaseDate";
 import { convertHourStringToMinutes } from "@utils/convertHourStringToMinutes";
 import { convertMinutesToHourString } from "@utils/convertMinutesToHourString";
 
@@ -38,6 +40,7 @@ interface EditAdDialogProps {
 
 export function EditAdDialog({ currentAd }: EditAdDialogProps) {
   const { user } = useAuth();
+  const { games } = useGame();
 
   const {
     register,
@@ -69,6 +72,21 @@ export function EditAdDialog({ currentAd }: EditAdDialogProps) {
     if (hourStartInMinutes >= hourEndInMinutes) {
       toast.error(
         "O horário que começa não pode ser maior ou igual ao horário que termina!"
+      );
+      return;
+    }
+
+    const { releaseAt = "" } =
+      games.find((game) => game.id === data.game) ?? {};
+
+    if (
+      checkIfYearsPlayingIsGreaterThanGameReleaseDate(
+        releaseAt,
+        data.yearsPlaying
+      )
+    ) {
+      toast.error(
+        "É impossível que você tenha mais horas jogadas que o jogo tem de existência!"
       );
       return;
     }

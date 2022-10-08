@@ -3,4 +3,5 @@ export interface Game {
   name: string;
   bannerUrl: string;
   slug: string;
+  releaseAt: string;
 }

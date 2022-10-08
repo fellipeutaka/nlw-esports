@@ -13,8 +13,10 @@ import { CreateAdTrigger } from "@components/CreateAd/CreateAdTrigger";
 import { ErrorMessage } from "@components/Form/ErrorMessage";
 import { Select } from "@components/Form/Select";
 import { useAuth } from "@hooks/useAuth";
+import { useGame } from "@hooks/useGame";
 import { supabase } from "@lib/supabase";
 import { adSchema } from "@utils/adSchema";
+import { checkIfYearsPlayingIsGreaterThanGameReleaseDate } from "@utils/checkIfYearsPlayingIsGreaterThanGameReleaseDate";
 import { convertHourStringToMinutes } from "@utils/convertHourStringToMinutes";
 
 import { Input } from "../Form/Input";
@@ -34,6 +36,7 @@ export interface Fields {
 
 export function CreateAdDialog() {
   const { user } = useAuth();
+  const { games } = useGame();
 
   const {
     register,
@@ -65,6 +68,21 @@ export function CreateAdDialog() {
     if (hourStartInMinutes >= hourEndInMinutes) {
       toast.error(
         "O horário que começa não pode ser maior ou igual ao horário que termina!"
+      );
+      return;
+    }
+
+    const { releaseAt = "" } =
+      games.find((game) => game.id === data.game) ?? {};
+
+    if (
+      checkIfYearsPlayingIsGreaterThanGameReleaseDate(
+        releaseAt,
+        data.yearsPlaying
+      )
+    ) {
+      toast.error(
+        "É impossível que você tenha mais horas jogadas que o jogo tem de existência!"
       );
       return;
     }
