@@ -50,12 +50,26 @@ export default function MyAds({ user, ads: staticAds }: MyAdsProps) {
   }, [fetchAds]);
 
   const onInsertAd = useCallback(
-    (payload: SupabaseRealtimePayload<IMyAds>) => {
+    async (payload: SupabaseRealtimePayload<IMyAds>) => {
       if (payload.new.userId === user.id) {
-        const newAd = {
-          ...payload.new,
-        };
-        setAds((state) => [...state, newAd]);
+        try {
+          const { data } = await supabase
+            .from<IMyAds>("Ad")
+            .select(
+              `
+            *,
+            game:gameId (name)
+          `
+            )
+            .eq("id", payload.new.id)
+            .throwOnError();
+          if (!data) {
+            throw data;
+          }
+          setAds((state) => [...state, data[0]]);
+        } catch (err) {
+          console.error(err);
+        }
       }
     },
     [user.id]
@@ -77,16 +91,11 @@ export default function MyAds({ user, ads: staticAds }: MyAdsProps) {
     [user.id]
   );
 
-  const onDeleteAd = useCallback(
-    (payload: SupabaseRealtimePayload<IMyAds>) => {
-      if (payload.old.userId === user.id) {
-        setAds((state) => {
-          return state.filter((ad) => ad.id !== payload.old.id);
-        });
-      }
-    },
-    [user.id]
-  );
+  const onDeleteAd = useCallback((payload: SupabaseRealtimePayload<IMyAds>) => {
+    setAds((state) => {
+      return state.filter((ad) => ad.id !== payload.old.id);
+    });
+  }, []);
 
   useEffect(() => {
     const realtime = supabase
