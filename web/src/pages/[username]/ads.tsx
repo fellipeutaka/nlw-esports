@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 
-import { MyAds as IMyAds } from "@@types/Ad";
-import { User } from "@@types/User";
-import { SupabaseRealtimePayload } from "@supabase/supabase-js";
+import type { MyAds as IMyAds } from "@@types/Ad";
+import type { User } from "@@types/User";
+import type { SupabaseRealtimePayload } from "@supabase/supabase-js";
 import Lottie from "lottie-react";
-import { GetStaticPaths, GetStaticProps } from "next";
+import type { GetStaticPaths, GetStaticProps } from "next";
 
 import sadAnimation from "@assets/sad.json";
 import { Ad } from "@components/Ad";
@@ -24,29 +24,69 @@ export default function MyAds({ user, ads: staticAds }: MyAdsProps) {
   const [ads, setAds] = useState(staticAds);
   const { user: currentUser } = useAuth();
 
-  const onInsertAd = useCallback((payload: SupabaseRealtimePayload<IMyAds>) => {
-    const newAd = {
-      ...payload.new,
-    };
-    setAds((state) => [...state, newAd]);
-  }, []);
+  const fetchAds = useCallback(async () => {
+    try {
+      const { data } = await supabase
+        .from<IMyAds>("Ad")
+        .select(
+          `
+        *,
+        game:gameId (id, name)
+      `
+        )
+        .eq("userId", user.id)
+        .order("createdAt", {
+          ascending: true,
+        })
+        .throwOnError();
+      setAds(data ?? []);
+    } catch (err) {
+      console.error(err);
+    }
+  }, [user.id]);
 
-  const onUpdateAd = useCallback((payload: SupabaseRealtimePayload<IMyAds>) => {
-    setAds((state) => {
-      const target = state.find((ad) => ad.id === payload.old.id);
-      const editedAd = {
-        ...target,
-        ...payload.new,
-      };
-      return state.map((ad) => (ad.id === editedAd.id ? editedAd : ad));
-    });
-  }, []);
+  useEffect(() => {
+    fetchAds();
+  }, [fetchAds]);
 
-  const onDeleteAd = useCallback((payload: SupabaseRealtimePayload<IMyAds>) => {
-    setAds((state) => {
-      return state.filter((ad) => ad.id !== payload.old.id);
-    });
-  }, []);
+  const onInsertAd = useCallback(
+    (payload: SupabaseRealtimePayload<IMyAds>) => {
+      if (payload.new.userId === user.id) {
+        const newAd = {
+          ...payload.new,
+        };
+        setAds((state) => [...state, newAd]);
+      }
+    },
+    [user.id]
+  );
+
+  const onUpdateAd = useCallback(
+    (payload: SupabaseRealtimePayload<IMyAds>) => {
+      if (payload.new.userId === user.id) {
+        setAds((state) => {
+          const target = state.find((ad) => ad.id === payload.old.id);
+          const editedAd = {
+            ...target,
+            ...payload.new,
+          };
+          return state.map((ad) => (ad.id === editedAd.id ? editedAd : ad));
+        });
+      }
+    },
+    [user.id]
+  );
+
+  const onDeleteAd = useCallback(
+    (payload: SupabaseRealtimePayload<IMyAds>) => {
+      if (payload.new.userId === user.id) {
+        setAds((state) => {
+          return state.filter((ad) => ad.id !== payload.old.id);
+        });
+      }
+    },
+    [user.id]
+  );
 
   useEffect(() => {
     const realtime = supabase
