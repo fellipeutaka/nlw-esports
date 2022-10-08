@@ -1,3 +1,4 @@
+import { memo, useMemo } from "react";
 import { TouchableOpacityProps } from "react-native";
 
 import { GameAd } from "@@types/GameAd";
@@ -9,8 +10,17 @@ import { Ads, Container, Cover, Footer, Name } from "./styles";
 
 type GameCardProps = TouchableOpacityProps & GameAd;
 
-export function GameCard({ id, name, Ad, bannerUrl, ...rest }: GameCardProps) {
-  const imgSrc = getBannerPhoto({ url: bannerUrl, width: 480, height: 640 });
+function GameCardComponent({
+  id,
+  name,
+  Ad,
+  bannerUrl,
+  ...rest
+}: GameCardProps) {
+  const imgSrc = useMemo(
+    () => getBannerPhoto({ url: bannerUrl, width: 480, height: 640 }),
+    []
+  );
 
   return (
     <Container {...rest}>
@@ -23,3 +33,5 @@ export function GameCard({ id, name, Ad, bannerUrl, ...rest }: GameCardProps) {
     </Container>
   );
 }
+
+export const GameCard = memo(GameCardComponent);

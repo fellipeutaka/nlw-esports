@@ -1,69 +1,95 @@
-import { useEffect, useState, useCallback } from "react";
+import { useState, useCallback } from "react";
 
-import { Ad } from "@@types/Ad";
-import { GameAd } from "@@types/GameAd";
-import { SupabaseRealtimePayload } from "@supabase/supabase-js";
+import type { Ad } from "@@types/Ad";
+import type { GameAd } from "@@types/GameAd";
+import { useFocusEffect } from "@react-navigation/native";
+import type { SupabaseRealtimePayload } from "@supabase/supabase-js";
 
 import logoImg from "@assets/logo-nlw-esports.png";
 import { Background } from "@components/Background";
-import { GameCard } from "@components/GameCard";
+import { GameList } from "@components/GameList";
 import { Heading } from "@components/Heading";
-import { useAppNavigation } from "@hooks/useAppNavigation";
 import { supabase } from "@lib/supabase";
 import { ActivityIndicator } from "@screens/Loading/styles";
 import { Alert } from "@utils/alert";
 
-import { Container, GameList, Logo } from "./styles";
+import { Container, Logo } from "./styles";
 
 export function Home() {
   const [games, setGames] = useState<GameAd[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const navigation = useAppNavigation();
 
-  useEffect(() => {
-    supabase
-      .from<GameAd>("Game")
-      .select("*, Ad(id)")
-      .order("name", {
-        ascending: true,
-      })
-      .then(({ data, error }) => {
-        if (error) {
-          console.error(error);
-          Alert({
-            title: "Erro",
-            message: "Ocorreu um erro ao buscar os anúncios!",
-          });
-        } else if (data) {
-          setGames(data);
-        }
-        setIsLoading(false);
+  const fetchGames = useCallback(async () => {
+    try {
+      const { data } = await supabase
+        .from<GameAd>("Game")
+        .select("*, Ad(id)")
+        .order("name", {
+          ascending: true,
+        })
+        .throwOnError();
+
+      setGames(data ?? []);
+    } catch (err) {
+      console.error(err);
+      Alert({
+        title: "Erro",
+        message: "Ocorreu um erro ao buscar os anúncios!",
       });
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
+  useFocusEffect(
+    useCallback(() => {
+      fetchGames();
+    }, [])
+  );
+
   const realtimeOnInsert = useCallback(
-    (payload: SupabaseRealtimePayload<Ad>) => {},
+    (payload: SupabaseRealtimePayload<Ad>) => {
+      setGames((state) => {
+        const newGame = state.find((game) => game.id === payload.new.gameId);
+        newGame?.Ad.push(payload.new);
+        return state.map((gameAds) =>
+          gameAds.id === newGame?.id ? newGame : gameAds
+        );
+      });
+    },
     []
   );
 
-  useEffect(() => {
-    const realtime = supabase
-      .from<Ad>("Ad")
-      .on("INSERT", (payload) => realtimeOnInsert(payload))
-      .subscribe();
+  const realtimeOnDelete = useCallback(
+    (payload: SupabaseRealtimePayload<Ad>) => {
+      setGames((state) => {
+        const changedGame = state.find((game) =>
+          game.Ad.find((ad) => ad.id === payload.old.id)
+        );
+        const changedGameAdIndex =
+          changedGame?.Ad.findIndex((ad) => ad.id === payload.old.id) ?? 0;
+        changedGame?.Ad.splice(changedGameAdIndex, 1);
+        return state.map((game) =>
+          game.id === changedGame?.id ? changedGame : game
+        );
+      });
+    },
+    []
+  );
 
-    return () => {
-      realtime.unsubscribe();
-    };
-  }, [games]);
+  useFocusEffect(
+    useCallback(() => {
+      const realtime = supabase
+        .from<Ad>("Ad")
+        .on("INSERT", (payload) => realtimeOnInsert(payload))
+        .on("DELETE", (payload) => realtimeOnDelete(payload))
+        .subscribe();
 
-  function handleOpenGame(props: GameAd) {
-    if (props.Ad.length <= 0) {
-      Alert({ title: "Aviso", message: "Não há anúncios para esse jogo" });
-    } else {
-      navigation.navigate("Game", props);
-    }
-  }
+      return () => {
+        realtime.unsubscribe();
+      };
+    }, [realtimeOnInsert, realtimeOnDelete])
+  );
 
   return (
     <Background>
@@ -73,23 +99,7 @@ export function Home() {
           title="Encontre seu duo!"
           subtitle="Selecione o game que deseja jogar..."
         />
-        {isLoading ? (
-          <ActivityIndicator />
-        ) : (
-          <GameList
-            data={games}
-            keyExtractor={(game) => game.id}
-            renderItem={({ item }) => (
-              <GameCard
-                id={item.id}
-                Ad={item.Ad}
-                bannerUrl={item.bannerUrl}
-                name={item.name}
-                onPress={() => handleOpenGame(item)}
-              />
-            )}
-          />
-        )}
+        {isLoading ? <ActivityIndicator /> : <GameList data={games} />}
       </Container>
     </Background>
   );

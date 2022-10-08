@@ -13,7 +13,7 @@ const theme = {
 
     PRIMARY: "#8B5CF6",
     SUCCESS: "#34D399",
-    ALERT: "#F87171",
+    ALERT: "#DC2626",
 
     FOOTER: ["rgba(0,0,0,0)", "rgba(0,0,0,0.9)"],
     OVERLAY: "rgba(0,0,0,0.6)",

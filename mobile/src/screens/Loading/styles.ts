@@ -1,3 +1,5 @@
+import { ActivityIndicator as RNActivityIndicator } from "react-native";
+
 import styled from "styled-components/native";
 
 export const Container = styled.View`
@@ -6,11 +8,7 @@ export const Container = styled.View`
   align-items: center;
 `;
 
-interface ActivityIndicatorProps {
-  size?: "small" | "large";
-}
-
-export const ActivityIndicator = styled.ActivityIndicator.attrs<ActivityIndicatorProps>(
+export const ActivityIndicator = styled(RNActivityIndicator).attrs(
   ({ theme, size = "large" }) => ({
     color: theme.COLORS.PRIMARY,
     size,

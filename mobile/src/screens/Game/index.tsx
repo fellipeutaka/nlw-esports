@@ -1,25 +1,27 @@
-import { useEffect, useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback } from "react";
 
-import { Ad } from "@@types/Ad";
-import { AppStackParamsList } from "@@types/routes/ParamsList/App";
+import type { Ad } from "@@types/Ad";
+import type { AppStackParamsList } from "@@types/routes/ParamsList/App";
 import { useHeaderHeight } from "@react-navigation/elements";
-import { RouteProp, useRoute } from "@react-navigation/native";
-import { SupabaseRealtimePayload } from "@supabase/supabase-js";
+import { RouteProp, useFocusEffect, useRoute } from "@react-navigation/native";
+import type { SupabaseRealtimePayload } from "@supabase/supabase-js";
 
+import { AdList } from "@components/AdList";
 import { Background } from "@components/Background";
-import { DuoCard } from "@components/DuoCard";
 import { DuoMatch } from "@components/DuoMatch";
 import { Heading } from "@components/Heading";
+import { useAppNavigation } from "@hooks/useAppNavigation";
 import { supabase } from "@lib/supabase";
 import { ActivityIndicator } from "@screens/Loading/styles";
 import { getBannerPhoto } from "@utils/getBannerPhoto";
 
-import { AdList, Container, HeroImage } from "./styles";
+import { Container, HeroImage } from "./styles";
 
 export function Game() {
   const [ads, setAds] = useState<Ad[]>([]);
   const [discordSelected, setDiscordSelected] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const navigation = useAppNavigation();
   const { params } = useRoute<RouteProp<AppStackParamsList, "Game">>();
   const headerHeight = useHeaderHeight();
 
@@ -56,29 +58,44 @@ export function Game() {
     }
   }, []);
 
-  useEffect(() => {
-    fetchAds();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchAds();
+    }, [fetchAds])
+  );
+
+  const checkIfThereIsNoMoreAds = useCallback(
+    (adsAmount = ads.length) => {
+      if (!isLoading && adsAmount === 0) {
+        navigation.goBack();
+      }
+    },
+    [isLoading, ads]
+  );
+
+  useFocusEffect(checkIfThereIsNoMoreAds);
 
   const realtimeOnInsert = useCallback(
     async (payload: SupabaseRealtimePayload<Ad>) => {
-      try {
-        const userResponse = await supabase
-          .from("User")
-          .select("name")
-          .eq("id", payload.new.userId)
-          .throwOnError();
-        if (!userResponse.data) {
-          throw userResponse;
-        }
+      if (payload.new.gameId === params.id) {
+        try {
+          const userResponse = await supabase
+            .from("User")
+            .select("name")
+            .eq("id", payload.new.userId)
+            .throwOnError();
+          if (!userResponse.data) {
+            throw userResponse;
+          }
 
-        const newAd = {
-          ...payload.new,
-          user: userResponse.data[0],
-        };
-        setAds((state) => [...state, newAd]);
-      } catch (err) {
-        console.error(err);
+          const newAd = {
+            ...payload.new,
+            user: userResponse.data[0],
+          };
+          setAds((state) => [...state, newAd]);
+        } catch (err) {
+          console.error(err);
+        }
       }
     },
     []
@@ -101,24 +118,28 @@ export function Game() {
   const realtimeOnDeleteAd = useCallback(
     (payload: SupabaseRealtimePayload<Ad>) => {
       setAds((state) => {
+        const newList = state.filter((ad) => ad.id !== payload.old.id);
+        checkIfThereIsNoMoreAds(newList.length);
         return state.filter((ad) => ad.id !== payload.old.id);
       });
     },
     []
   );
 
-  useEffect(() => {
-    const realtime = supabase
-      .from<Ad>("Ad")
-      .on("INSERT", (payload) => realtimeOnInsert(payload))
-      .on("UPDATE", (payload) => realtimeOnUpdateAd(payload))
-      .on("DELETE", (payload) => realtimeOnDeleteAd(payload))
-      .subscribe();
+  useFocusEffect(
+    useCallback(() => {
+      const realtime = supabase
+        .from<Ad>("Ad")
+        .on("INSERT", (payload) => realtimeOnInsert(payload))
+        .on("UPDATE", (payload) => realtimeOnUpdateAd(payload))
+        .on("DELETE", (payload) => realtimeOnDeleteAd(payload))
+        .subscribe();
 
-    return () => {
-      realtime.unsubscribe();
-    };
-  }, [ads]);
+      return () => {
+        realtime.unsubscribe();
+      };
+    }, [realtimeOnInsert, realtimeOnUpdateAd, realtimeOnDeleteAd])
+  );
 
   return (
     <Background>
@@ -128,16 +149,7 @@ export function Game() {
         {isLoading ? (
           <ActivityIndicator />
         ) : (
-          <AdList
-            data={ads}
-            keyExtractor={(ad) => ad.id}
-            renderItem={({ item }) => (
-              <DuoCard
-                data={item}
-                onConnect={() => setDiscordSelected(item.user.name)}
-              />
-            )}
-          />
+          <AdList data={ads} setDiscordSelected={setDiscordSelected} />
         )}
         <DuoMatch
           discord={discordSelected}

@@ -14,6 +14,7 @@ import {
   Heading,
   Logo,
 } from "./styles";
+
 const redirectUri = makeRedirectUri({
   useProxy: false,
 });
