@@ -8,17 +8,13 @@ import { getBannerPhoto } from "@utils/getBannerPhoto";
 
 import { Ads, Container, Cover, Footer, Name } from "./styles";
 
-type GameCardProps = TouchableOpacityProps & GameAd;
+type GameCardProps = TouchableOpacityProps & {
+  data: GameAd;
+};
 
-function GameCardComponent({
-  id,
-  name,
-  Ad,
-  bannerUrl,
-  ...rest
-}: GameCardProps) {
+function GameCardComponent({ data, ...rest }: GameCardProps) {
   const imgSrc = useMemo(
-    () => getBannerPhoto({ url: bannerUrl, width: 480, height: 640 }),
+    () => getBannerPhoto({ url: data.bannerUrl, width: 480, height: 640 }),
     []
   );
 
@@ -26,8 +22,8 @@ function GameCardComponent({
     <Container {...rest}>
       <Cover source={{ uri: imgSrc }}>
         <Footer>
-          <Name>{name}</Name>
-          <Ads>{getAdsCountText(Ad.length)}</Ads>
+          <Name>{data.name}</Name>
+          <Ads>{getAdsCountText(data.Ad.length)}</Ads>
         </Footer>
       </Cover>
     </Container>

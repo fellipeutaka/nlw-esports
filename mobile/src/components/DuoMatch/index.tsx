@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { ModalProps, ToastAndroid } from "react-native";
+import { ModalProps } from "react-native";
 
 import { setStringAsync } from "expo-clipboard";
 
+import { toast, ToastContainer } from "@lib/toast";
 import { ActivityIndicator } from "@screens/Loading/styles";
-import { Alert } from "@utils/alert";
 
 import {
   CheckIcon,
@@ -33,10 +33,16 @@ export function DuoMatch({ discord, onClose, ...rest }: DuoMatchProps) {
     setIsCopying(true);
     try {
       await setStringAsync(discord);
-      Alert({ title: "Sucesso", message: "Discord copiado com sucesso!" });
+      toast({
+        type: "success",
+        message: "Discord copiado com sucesso!",
+      });
     } catch (err) {
       console.error(err);
-      Alert({ title: "Erro", message: "Ocorreu um erro ao copiar o Discord!" });
+      toast({
+        type: "error",
+        message: "Ocorreu um erro ao copiar o Discord!",
+      });
     } finally {
       setIsCopying(false);
     }
@@ -56,6 +62,7 @@ export function DuoMatch({ discord, onClose, ...rest }: DuoMatchProps) {
         <Overlay />
       </OverlayTrigger>
       <Container>
+        <ToastContainer />
         <Content>
           <CloseButton onPress={onClose}>
             <CloseIcon />

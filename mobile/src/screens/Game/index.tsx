@@ -12,6 +12,7 @@ import { DuoMatch } from "@components/DuoMatch";
 import { Heading } from "@components/Heading";
 import { useAppNavigation } from "@hooks/useAppNavigation";
 import { supabase } from "@lib/supabase";
+import { toast } from "@lib/toast";
 import { ActivityIndicator } from "@screens/Loading/styles";
 import { getBannerPhoto } from "@utils/getBannerPhoto";
 
@@ -53,6 +54,10 @@ export function Game() {
       setAds(data ?? []);
     } catch (err) {
       console.error(err);
+      toast({
+        type: "error",
+        message: "Ocorreu um erro ao buscar os anúncios!",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -67,6 +72,10 @@ export function Game() {
   const checkIfThereIsNoMoreAds = useCallback(
     (adsAmount = ads.length) => {
       if (!isLoading && adsAmount === 0) {
+        toast({
+          type: "error",
+          message: "Não há anúncios para esse jogo",
+        });
         navigation.goBack();
       }
     },

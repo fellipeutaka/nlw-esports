@@ -10,8 +10,8 @@ import { Background } from "@components/Background";
 import { GameList } from "@components/GameList";
 import { Heading } from "@components/Heading";
 import { supabase } from "@lib/supabase";
+import { toast } from "@lib/toast";
 import { ActivityIndicator } from "@screens/Loading/styles";
-import { Alert } from "@utils/alert";
 
 import { Container, Logo } from "./styles";
 
@@ -32,8 +32,8 @@ export function Home() {
       setGames(data ?? []);
     } catch (err) {
       console.error(err);
-      Alert({
-        title: "Erro",
+      toast({
+        type: "error",
         message: "Ocorreu um erro ao buscar os anúncios!",
       });
     } finally {

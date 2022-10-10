@@ -1,5 +1,4 @@
 import { useCallback, useState } from "react";
-import { ListRenderItemInfo } from "react-native";
 
 import type { SupabaseAd } from "@@types/Ad";
 import { useFocusEffect } from "@react-navigation/native";
@@ -9,9 +8,10 @@ import { SignOut } from "phosphor-react-native";
 
 import animation from "@assets/sad.json";
 import { Background } from "@components/Background";
-import { MyAd } from "@components/MyAd";
+import { MyAdList } from "@components/MyAdList";
 import { useAuth } from "@hooks/useAuth";
 import { supabase } from "@lib/supabase";
+import { toast } from "@lib/toast";
 import { ActivityIndicator } from "@screens/Loading/styles";
 import { countAds } from "@utils/countAds";
 
@@ -23,7 +23,6 @@ import {
   FullName,
   Header,
   HeaderText,
-  MyAdList,
   SignOutButton,
   Heading,
   UserInfo,
@@ -45,10 +44,17 @@ export function Profile() {
         .from<SupabaseAd>("Ad")
         .select()
         .eq("userId", user.id)
+        .order("createdAt", {
+          ascending: true,
+        })
         .throwOnError();
       setMyAds(data ?? []);
     } catch (err) {
       console.error(err);
+      toast({
+        type: "error",
+        message: "Ocorreu um erro ao buscar os anúncios!",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -62,10 +68,12 @@ export function Profile() {
 
   const realtimeOnInsert = useCallback(
     (payload: SupabaseRealtimePayload<SupabaseAd>) => {
-      const newAd = {
-        ...payload.new,
-      };
-      setMyAds((state) => [...state, newAd]);
+      if (payload.new.userId === user.id) {
+        const newAd = {
+          ...payload.new,
+        };
+        setMyAds((state) => [...state, newAd]);
+      }
     },
     []
   );
@@ -119,13 +127,6 @@ export function Profile() {
     }
   }, [realtimeOnInsert, realtimeOnUpdateAd, realtimeOnDeleteAd]);
 
-  const renderAdKeyExtractor = useCallback((ad: SupabaseAd) => ad.id, []);
-
-  const renderAdItem = useCallback(
-    ({ item }: ListRenderItemInfo<SupabaseAd>) => <MyAd data={item} />,
-    []
-  );
-
   return (
     <Background>
       <Container>
@@ -159,11 +160,7 @@ export function Profile() {
               />
             </LottieContainer>
           ) : (
-            <MyAdList
-              data={myAds}
-              keyExtractor={renderAdKeyExtractor}
-              renderItem={renderAdItem}
-            />
+            <MyAdList data={myAds} />
           )}
         </AdListContainer>
       </Container>

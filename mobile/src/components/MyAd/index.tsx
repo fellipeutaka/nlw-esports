@@ -6,7 +6,7 @@ import { useTheme } from "styled-components/native";
 
 import { DuoInfo } from "@components/DuoInfo";
 import { supabase } from "@lib/supabase";
-import { Alert } from "@utils/alert";
+import { toast } from "@lib/toast";
 import { convertMinutesToHourString } from "@utils/convertMinutesToHourString";
 
 import { Container, DeleteButton, DeleteText } from "./styles";
@@ -21,11 +21,11 @@ function MyAdComponent({ data }: MyAdProps) {
   async function handleDeleteAd() {
     try {
       await supabase.from("Ad").delete().match({ id: data.id }).throwOnError();
-      Alert({ title: "Sucesso!", message: "Anúncio excluído com sucesso!" });
+      toast({ type: "success", message: "Anúncio excluído com sucesso!" });
     } catch (err) {
       console.error(err);
-      Alert({
-        title: "Erro!",
+      toast({
+        type: "error",
         message: "Ocorreu um erro ao excluir esse anúncio!",
       });
     }

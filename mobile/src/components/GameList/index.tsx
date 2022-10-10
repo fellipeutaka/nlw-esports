@@ -5,7 +5,7 @@ import type { GameAd } from "@@types/GameAd";
 
 import { GameCard } from "@components/GameCard";
 import { useAppNavigation } from "@hooks/useAppNavigation";
-import { Alert } from "@utils/alert";
+import { toast } from "@lib/toast";
 
 import { List } from "./styles";
 
@@ -18,7 +18,10 @@ function GameListComponent({ data }: GameListProps) {
 
   const handleOpenGame = useCallback((props: GameAd) => {
     if (props.Ad.length <= 0) {
-      Alert({ title: "Aviso", message: "Não há anúncios para esse jogo" });
+      toast({
+        type: "error",
+        message: "Não há anúncios para esse jogo",
+      });
     } else {
       navigation.navigate("Game", props);
     }
@@ -28,13 +31,7 @@ function GameListComponent({ data }: GameListProps) {
 
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<GameAd>) => (
-      <GameCard
-        id={item.id}
-        Ad={item.Ad}
-        bannerUrl={item.bannerUrl}
-        name={item.name}
-        onPress={() => handleOpenGame(item)}
-      />
+      <GameCard data={item} onPress={() => handleOpenGame(item)} />
     ),
     []
   );

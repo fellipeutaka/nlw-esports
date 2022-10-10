@@ -8,6 +8,7 @@ import { StatusBar } from "expo-status-bar";
 import { ThemeProvider } from "styled-components/native";
 
 import { AuthProvider } from "@contexts/AuthContext";
+import { ToastContainer } from "@lib/toast";
 import { Routes } from "@routes";
 import theme from "@theme";
 
@@ -18,6 +19,7 @@ export default function App() {
         <StatusBar style="light" backgroundColor="transparent" translucent />
         <AuthProvider>
           <Routes />
+          <ToastContainer />
         </AuthProvider>
       </ThemeProvider>
     </SafeAreaProvider>

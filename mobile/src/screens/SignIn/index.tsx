@@ -5,6 +5,7 @@ import { Background } from "@components/Background";
 import { SubTitle } from "@components/SubTitle";
 import { Title } from "@components/Title";
 import { supabase, supabaseUrl } from "@lib/supabase";
+import { toast } from "@lib/toast";
 
 import {
   Button,
@@ -36,6 +37,10 @@ export function SignIn() {
       }
     } catch (err) {
       console.error(err);
+      toast({
+        type: "error",
+        message: "Não foi possível se conectar ao Discord!",
+      });
     }
   }
 

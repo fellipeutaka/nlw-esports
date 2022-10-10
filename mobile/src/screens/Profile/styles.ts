@@ -1,7 +1,5 @@
-import { FlatList, FlatListProps, Image } from "react-native";
+import { Image } from "react-native";
 
-import { SupabaseAd } from "@@types/Ad";
-import LottieView from "lottie-react-native";
 import styled from "styled-components/native";
 
 import { Heading as HeadingComponent } from "@components/Heading";
@@ -60,19 +58,6 @@ export const AdListContainer = styled.View`
 export const Heading = styled(HeadingComponent)`
   padding: 0;
   margin: 48px 0 12px 32px;
-`;
-
-export const MyAdList = styled(
-  FlatList as new (props: FlatListProps<SupabaseAd>) => FlatList<SupabaseAd>
-).attrs({
-  showsHorizontalScrollIndicator: false,
-  horizontal: true,
-  contentContainerStyle: {
-    paddingLeft: 32,
-    paddingRight: 48,
-  },
-})`
-  margin-top: 8px;
 `;
 
 export const LottieContainer = styled.View`
