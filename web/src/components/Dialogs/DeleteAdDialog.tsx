@@ -22,7 +22,7 @@ export function DeleteAdDialog({ adId }: DeleteAdDialogProps) {
 
   return (
     <AlertDialog.Root>
-      <AlertDialog.Trigger className="flex items-center justify-center mt-auto py-3 col-span-2 rounded-md gap-2 bg-red-600 hover:bg-red-700 font-semibold outline focus:outline-red-600">
+      <AlertDialog.Trigger className="flex items-center justify-center mt-auto py-3 col-span-2 rounded-md gap-2 bg-red-600 hover:bg-red-700 font-semibold custom-outline focus-visible:outline-red-600">
         <Trash size={24} />
         <span>Excluir</span>
       </AlertDialog.Trigger>
@@ -36,12 +36,12 @@ export function DeleteAdDialog({ adId }: DeleteAdDialogProps) {
             Você tem certeza que deseja excluir esse anúncio?
           </AlertDialog.Description>
           <div className="flex justify-end gap-6">
-            <AlertDialog.Cancel className="bg-zinc-500 rounded-md font-semibold py-3 px-5 hover:bg-zinc-600 outline focus:outline-zinc-600">
+            <AlertDialog.Cancel className="bg-zinc-500 rounded-md font-semibold py-3 px-5 hover:bg-zinc-600 custom-outline focus-visible:outline-zinc-600">
               Cancelar
             </AlertDialog.Cancel>
             <AlertDialog.Action
               onClick={handleDeleteAd}
-              className="flex items-center justify-center w-32 font-semibold gap-3 bg-red-600 rounded-md py-3 hover:bg-red-700 outline focus:outline-red-700"
+              className="flex items-center justify-center w-32 font-semibold gap-3 bg-red-600 rounded-md py-3 hover:bg-red-700 custom-outline focus-visible:outline-red-700"
             >
               <Trash size={24} />
               <span>Excluir</span>

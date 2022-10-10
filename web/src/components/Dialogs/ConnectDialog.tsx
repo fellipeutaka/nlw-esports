@@ -20,7 +20,7 @@ export function ConnectDialog({ discord }: ConnectDialogProps) {
 
   return (
     <Dialog.Root>
-      <Dialog.Trigger className="flex items-center justify-center mt-auto py-3 rounded-md gap-2 bg-violet-500 font-semibold outline focus:outline-violet-500">
+      <Dialog.Trigger className="flex items-center justify-center mt-auto py-3 rounded-md gap-2 bg-violet-500 font-semibold custom-outline focus:outline-violet-500">
         <GameController size={24} /> <span>Conectar</span>
       </Dialog.Trigger>
       <Dialog.Portal>
@@ -40,7 +40,7 @@ export function ConnectDialog({ discord }: ConnectDialogProps) {
               </span>
               <button
                 onClick={handleCopyDiscord}
-                className="bg-zinc-900 py-3 rounded outline focus:outline-zinc-900"
+                className="bg-zinc-900 py-3 rounded custom-outline focus-visible:outline-zinc-900"
               >
                 {discord}
               </button>

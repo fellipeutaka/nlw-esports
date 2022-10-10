@@ -36,7 +36,7 @@ export function SignInDialog() {
               onLoadedData={() => console.log("Carregou")}
             />
             <button
-              className="w-full h-14 rounded-md px-2 gap-2 flex items-center justify-center bg-violet-500 hover:bg-violet-600 outline focus:outline-violet-500"
+              className="w-full h-14 rounded-md px-2 gap-2 flex items-center justify-center bg-violet-500 hover:bg-violet-600 custom-outline focus-visible:outline-violet-500"
               onClick={handleSignIn}
             >
               <DiscordLogo className="w-6 h-6 fill-white" />

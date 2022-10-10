@@ -90,6 +90,10 @@ export function GameList() {
     };
   }, [games, onInsertAd, onDelete]);
 
+  const handleSkipNavigation = useCallback(() => {    
+    document.getElementById("dialog")?.focus();
+  }, []);
+
   if (isFetchingGames) {
     return (
       <Lottie
@@ -104,8 +108,11 @@ export function GameList() {
     return null;
   }
 
+  
+
   return (
     <div className="relative md:w-full w-3/4">
+      <button onClick={handleSkipNavigation} className="absolute -left-full focus:left-0 py-3 px-4 rounded-md bg-violet-500 custom-outline focus:outline-violet-500">Pular navegação</button>
       <section ref={sliderRef} className="mt-16 keen-slider">
         {gameAds.map((gameAd, index) => (
           <GameAd key={gameAd.id} data={gameAd} index={index} />

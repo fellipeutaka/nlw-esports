@@ -18,7 +18,7 @@ export function ProfilePopover() {
 
   return (
     <Popover.Root>
-      <Popover.Trigger className={styles.trigger}>
+      <Popover.Trigger className={`${styles.trigger} custom-outline focus-visible:outline-violet-500`}>
         <Image
           className="w-full h-full rounded-full"
           src={user.user_metadata.avatar_url}
@@ -31,19 +31,19 @@ export function ProfilePopover() {
       <Popover.Portal>
         <Popover.Content className={styles.content} align="end" sideOffset={8}>
           <Link href={`/${user.user_metadata.full_name.toLowerCase()}`}>
-            <a className="flex items-center px-6 pt-4 pb-3 hover:opacity-60 transition-opacity duration-300">
+            <a className="flex items-center px-6 pt-4 pb-3 hover:opacity-60 custom-outline focus-visible:outline-violet-500">
               <User size={24} className="text-violet-500" />
               <span className="ml-4">Meu perfil</span>
             </a>
           </Link>
           <Link href={`/${user.user_metadata.full_name.toLowerCase()}/ads`}>
-            <a className="flex items-center px-6 py-3 hover:opacity-60 transition-opacity duration-300">
+            <a className="flex items-center px-6 py-3 hover:opacity-60 custom-outline focus-visible:outline-violet-500">
               <Megaphone size={24} className="text-violet-500 -scale-x-100" />
               <span className="ml-4">Meus anúncios</span>
             </a>
           </Link>
           <AlertDialog.Root>
-            <AlertDialog.Trigger className="flex items-center px-6 py-3 hover:opacity-60 transition-opacity duration-300">
+            <AlertDialog.Trigger className="flex items-center px-6 py-3 hover:opacity-60 custom-outline focus-visible:outline-violet-500">
               <SignOut size={24} className="text-violet-500" />
               <span className="ml-4">Sair</span>
             </AlertDialog.Trigger>

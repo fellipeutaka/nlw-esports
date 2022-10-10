@@ -3,13 +3,13 @@ import { toast } from "react-toastify";
 
 import type { SupabaseAd } from "@@types/Ad";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as Checkbox from "@radix-ui/react-checkbox";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import * as SelectPrimitive from "@radix-ui/react-select";
 import { Root as ToggleGroup } from "@radix-ui/react-toggle-group";
-import { CaretDown, Check, GameController } from "phosphor-react";
+import { CaretDown, GameController } from "phosphor-react";
 
 import { CreateAdTrigger } from "@components/CreateAd/CreateAdTrigger";
+import { Checkbox } from "@components/Form/Checkbox";
 import { ErrorMessage } from "@components/Form/ErrorMessage";
 import { Select } from "@components/Form/Select";
 import { useAuth } from "@hooks/useAuth";
@@ -18,6 +18,7 @@ import { supabase } from "@lib/supabase";
 import { adSchema } from "@utils/adSchema";
 import { checkIfYearsPlayingIsGreaterThanGameReleaseDate } from "@utils/checkIfYearsPlayingIsGreaterThanGameReleaseDate";
 import { convertHourStringToMinutes } from "@utils/convertHourStringToMinutes";
+import { handleScape } from "@utils/handleScape";
 
 import { Input } from "../Form/Input";
 import { Label } from "../Form/Label";
@@ -103,8 +104,7 @@ export function CreateAdDialog() {
         })
         .throwOnError();
       reset();
-      //  Close dialog
-      document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
+      handleScape();
       toast.success("Seu anúncio foi criado com sucesso!");
     } catch (err) {
       toast.error("Ocorreu um erro! Tente novamente mais tarde.");
@@ -134,7 +134,7 @@ export function CreateAdDialog() {
                   <SelectPrimitive.Root onValueChange={onChange}>
                     <SelectPrimitive.Trigger
                       id="game"
-                      className="flex items-center justify-between bg-zinc-900 py-3 px-4 rounded text-sm outline focus:outline-violet-500"
+                      className="flex items-center justify-between bg-zinc-900 py-3 px-4 rounded text-sm custom-outline focus:outline-violet-500"
                       aria-invalid={Boolean(errors.game)}
                       onBlur={onBlur}
                       ref={ref}
@@ -288,26 +288,20 @@ export function CreateAdDialog() {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <Checkbox.Checkbox
-                className="bg-zinc-900 w-6 h-6 p-1 rounded transition-all duration-300 outline-none focus:outline-offset-1 focus:outline-violet-500"
-                id="useVoiceChannel"
+              <Checkbox
                 onCheckedChange={(e) => setValue("useVoiceChannel", Boolean(e))}
-              >
-                <Checkbox.Indicator>
-                  <Check size={16} className="text-emerald-400" />
-                </Checkbox.Indicator>
-              </Checkbox.Checkbox>
+              />
               <label htmlFor="useVoiceChannel" className="text-sm">
                 Costumo me conectar ao chat de voz
               </label>
             </div>
             <div className="flex justify-end items-center mt-4 gap-4">
-              <DialogPrimitive.Close className="bg-zinc-500 rounded-md font-semibold py-3 px-5 hover:bg-zinc-600 outline focus:outline-zinc-500">
+              <DialogPrimitive.Close className="bg-zinc-500 rounded-md font-semibold py-3 px-5 hover:bg-zinc-600 custom-outline focus-visible:outline-zinc-500">
                 Cancelar
               </DialogPrimitive.Close>
               <button
                 type="submit"
-                className="flex items-center font-semibold gap-3 bg-violet-500 rounded-md py-3 px-5 hover:bg-violet-600 outline focus:outline-violet-500"
+                className="flex items-center font-semibold gap-3 bg-violet-500 rounded-md py-3 px-5 hover:bg-violet-600 custom-outline focus-visible:outline-violet-500"
               >
                 <GameController size={24} />
                 Encontrar duo

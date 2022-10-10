@@ -30,12 +30,12 @@ export function SignOutDialog() {
           Você tem certeza que deseja sair?
         </AlertDialog.Description>
         <div className="flex justify-end gap-6">
-          <AlertDialog.Cancel className="bg-zinc-500 rounded-md font-semibold py-3 px-5 hover:bg-zinc-600 outline focus:outline-zinc-500">
+          <AlertDialog.Cancel className="bg-zinc-500 rounded-md font-semibold py-3 px-5 hover:bg-zinc-600 custom-outline focus-visible:outline-zinc-500">
             Cancelar
           </AlertDialog.Cancel>
           <AlertDialog.Action
             onClick={handleSignOut}
-            className="flex items-center justify-center w-32 font-semibold gap-3 bg-red-600 rounded-md py-3 hover:bg-red-700 outline focus:outline-red-700"
+            className="flex items-center justify-center w-32 font-semibold gap-3 bg-red-600 rounded-md py-3 hover:bg-red-700 custom-outline focus-visible:outline-red-700"
           >
             <SignOut size={24} />
             <span>Sair</span>
