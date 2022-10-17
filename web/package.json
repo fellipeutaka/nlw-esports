@@ -17,6 +17,7 @@
     "@radix-ui/react-popover": "^1.0.0",
     "@radix-ui/react-select": "^1.0.0",
     "@radix-ui/react-toggle-group": "^1.0.0",
+    "@radix-ui/react-tooltip": "^1.0.2",
     "@supabase/supabase-js": "^1.35.7",
     "keen-slider": "^6.8.1",
     "lottie-react": "^2.3.1",

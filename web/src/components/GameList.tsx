@@ -15,6 +15,8 @@ import { GameAd } from "./GameAd";
 
 const adsPerView = 6;
 
+type RealtimePayload = SupabaseRealtimePayload<Ad>;
+
 export function GameList() {
   const { games, isFetchingGames } = useGame();
   const [gameAds, setGameAds] = useState<IGameAd[]>(games);
@@ -53,7 +55,7 @@ export function GameList() {
     },
   });
 
-  const onInsertAd = useCallback((payload: SupabaseRealtimePayload<Ad>) => {
+  const onInsertAd = useCallback((payload: RealtimePayload) => {
     setGameAds((state) => {
       const newGame = state.find((game) => game.id === payload.new.gameId);
       newGame?.Ad.push(payload.new);
@@ -63,16 +65,17 @@ export function GameList() {
     });
   }, []);
 
-  const onDelete = useCallback((payload: SupabaseRealtimePayload<Ad>) => {
+  const onDelete = useCallback((payload: RealtimePayload) => {
     setGameAds((state) => {
       const changedGame = state.find((game) =>
         game.Ad.find((ad) => ad.id === payload.old.id)
       );
-      const changedGameAdIndex =
-        changedGame?.Ad.findIndex((ad) => ad.id === payload.old.id) ?? 0;
-      changedGame?.Ad.splice(changedGameAdIndex, 1);
+      if (!changedGame) {
+        return state;
+      }
+      changedGame.Ad.length -= 1;
       return state.map((game) =>
-        game.id === changedGame?.id ? changedGame : game
+        game.id === changedGame.id ? changedGame : game
       );
     });
   }, []);
@@ -90,7 +93,7 @@ export function GameList() {
     };
   }, [games, onInsertAd, onDelete]);
 
-  const handleSkipNavigation = useCallback(() => {    
+  const handleSkipNavigation = useCallback(() => {
     document.getElementById("dialog")?.focus();
   }, []);
 
@@ -108,11 +111,14 @@ export function GameList() {
     return null;
   }
 
-  
-
   return (
     <div className="relative md:w-full w-3/4">
-      <button onClick={handleSkipNavigation} className="absolute -left-full focus:left-0 py-3 px-4 rounded-md bg-violet-500 custom-outline focus:outline-violet-500">Pular navegação</button>
+      <button
+        onClick={handleSkipNavigation}
+        className="absolute -left-full focus:left-0 py-3 px-4 rounded-md bg-violet-500 custom-outline focus:outline-violet-500"
+      >
+        Pular navegação
+      </button>
       <section ref={sliderRef} className="mt-16 keen-slider">
         {gameAds.map((gameAd, index) => (
           <GameAd key={gameAd.id} data={gameAd} index={index} />

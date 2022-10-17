@@ -155,6 +155,27 @@ c079c06e-87c2-4bf5-b2a7-e5b4b76e20dd,Dead by Daylight,https://static-cdn.jtvnw.n
 146e1670-ffb7-4d02-bde4-f8c4242b1732,World of Tanks,https://static-cdn.jtvnw.net/ttv-boxart/27546-{width}x{height}.jpg,world-of-tanks,2010-08-12
 ```
 
+### Create User trigger
+
+```sql
+create function public.handle_new_user()
+returns trigger
+language plpgsql
+security definer set search_path = public
+as $$
+begin
+  insert into public."User" (id, username, name, "fullName", email, "avatarUrl")
+  values (new.id, lower(new.raw_user_meta_data->>'full_name'), new.raw_user_meta_data->>'name', new.raw_user_meta_data->>'full_name', new.raw_user_meta_data->>'email', new.raw_user_meta_data->>'avatar_url');
+  return new;
+end;
+$$;
+
+-- trigger the function every time a user is created
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute procedure public.handle_new_user();
+```
+
 From your command line:
 
 ### Install Web App

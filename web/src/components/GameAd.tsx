@@ -31,6 +31,7 @@ export function GameAd({ data, index }: GameAdProps) {
           alt={data.name}
           width={bannerWidth}
           height={bannerHeight}
+          priority={index <= 6}
         />
         <div className="w-full pt-16 pb-4 px-4 bg-game-gradient flex flex-col absolute inset-0 top-auto">
           <strong className="font-bold md:text-left text-center">

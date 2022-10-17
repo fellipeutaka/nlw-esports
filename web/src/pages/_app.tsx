@@ -11,15 +11,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   return (
     <AuthProvider>
       <Component {...pageProps} />
-      <ToastContainer
-        position="top-right"
-        autoClose={4000}
-        hideProgressBar
-        pauseOnHover
-        draggable
-        closeOnClick
-        theme="dark"
-      />
+      <ToastContainer autoClose={4000} hideProgressBar theme="dark" />
     </AuthProvider>
   );
 }

@@ -8,14 +8,14 @@ import { GameProvider } from "@contexts/GameContext";
 export default function Home() {
   return (
     <SEO title="NLW eSports" description="Find Your Duo">
-      <GameProvider>
-        <main className="max-w-[1344px] mx-auto my-20 flex items-center flex-col relative">
-          <Header />
+      <main className="max-w-[1344px] mx-auto my-20 flex items-center flex-col relative">
+        <Header />
+        <GameProvider>
           <GameList />
           <Banner />
-        </main>
-        <Footer />
-      </GameProvider>
+        </GameProvider>
+      </main>
+      <Footer />
     </SEO>
   );
 }

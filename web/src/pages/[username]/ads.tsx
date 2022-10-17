@@ -20,6 +20,8 @@ interface MyAdsProps {
   ads: IMyAds[];
 }
 
+type RealtimePayload = SupabaseRealtimePayload<IMyAds>;
+
 export default function MyAds({ user, ads: staticAds }: MyAdsProps) {
   const [ads, setAds] = useState(staticAds);
   const { user: currentUser } = useAuth();
@@ -36,7 +38,7 @@ export default function MyAds({ user, ads: staticAds }: MyAdsProps) {
         )
         .eq("userId", user.id)
         .order("createdAt", {
-          ascending: true,
+          ascending: false,
         })
         .throwOnError();
       setAds(data ?? []);
@@ -50,7 +52,7 @@ export default function MyAds({ user, ads: staticAds }: MyAdsProps) {
   }, [fetchAds]);
 
   const onInsertAd = useCallback(
-    async (payload: SupabaseRealtimePayload<IMyAds>) => {
+    async (payload: RealtimePayload) => {
       if (payload.new.userId === user.id) {
         try {
           const { data } = await supabase
@@ -63,10 +65,9 @@ export default function MyAds({ user, ads: staticAds }: MyAdsProps) {
             )
             .eq("id", payload.new.id)
             .throwOnError();
-          if (!data) {
-            throw data;
+          if (data) {
+            setAds((state) => [data[0], ...state]);
           }
-          setAds((state) => [...state, data[0]]);
         } catch (err) {
           console.error(err);
         }
@@ -76,7 +77,7 @@ export default function MyAds({ user, ads: staticAds }: MyAdsProps) {
   );
 
   const onUpdateAd = useCallback(
-    (payload: SupabaseRealtimePayload<IMyAds>) => {
+    (payload: RealtimePayload) => {
       if (payload.new.userId === user.id) {
         setAds((state) => {
           const target = state.find((ad) => ad.id === payload.old.id);
@@ -91,7 +92,7 @@ export default function MyAds({ user, ads: staticAds }: MyAdsProps) {
     [user.id]
   );
 
-  const onDeleteAd = useCallback((payload: SupabaseRealtimePayload<IMyAds>) => {
+  const onDeleteAd = useCallback((payload: RealtimePayload) => {
     setAds((state) => {
       return state.filter((ad) => ad.id !== payload.old.id);
     });
@@ -179,10 +180,6 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
 
     if (!userResponse.data || !userResponse.data.length) {
       return {
-        redirect: {
-          destination: "/404",
-          permanent: false,
-        },
         notFound: true,
       };
     }
@@ -199,7 +196,7 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
       )
       .eq("userId", user.id)
       .order("createdAt", {
-        ascending: true,
+        ascending: false,
       })
       .throwOnError();
 
@@ -213,10 +210,6 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
   } catch (err) {
     console.error(err);
     return {
-      redirect: {
-        destination: "/404",
-        permanent: false,
-      },
       notFound: true,
     };
   }
@@ -235,8 +228,8 @@ export const getStaticPaths: GetStaticPaths = async () => {
       })) ?? [];
 
     return {
-      fallback: "blocking",
       paths,
+      fallback: "blocking",
     };
   } catch (err) {
     console.error(err);

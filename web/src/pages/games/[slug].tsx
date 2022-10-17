@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { Ad as IAd } from "@@types/Ad";
-import { Game } from "@@types/Game";
-import { SupabaseRealtimePayload } from "@supabase/supabase-js";
+import type { Ad as IAd } from "@@types/Ad";
+import type { Game } from "@@types/Game";
+import type { SupabaseRealtimePayload } from "@supabase/supabase-js";
 import Lottie from "lottie-react";
-import { GetStaticPaths, GetStaticProps } from "next";
+import type { GetStaticPaths, GetStaticProps } from "next";
 import Image from "next/future/image";
 
 import sadAnimation from "@assets/sad.json";
@@ -23,39 +23,39 @@ interface GameProps {
 const bannerWidth = "240";
 const bannerHeight = "320";
 
+type RealtimePayload = SupabaseRealtimePayload<IAd>;
+
 export default function Games({ game, ads }: GameProps) {
   const [gameAds, setGameAds] = useState(ads);
-  const imgSrc = getBannerPhoto({
-    url: game.bannerUrl,
-    width: bannerWidth,
-    height: bannerHeight,
-  });
-
-  const onInsertAd = useCallback(
-    async (payload: SupabaseRealtimePayload<IAd>) => {
-      try {
-        const userResponse = await supabase
-          .from("User")
-          .select("name")
-          .eq("id", payload.new.userId)
-          .throwOnError();
-        if (!userResponse.data) {
-          throw userResponse;
-        }
-
-        const newAd = {
-          ...payload.new,
-          user: userResponse.data[0],
-        };
-        setGameAds((state) => [...state, newAd]);
-      } catch (err) {
-        console.error(err);
-      }
-    },
-    []
+  const imgSrc = useMemo(
+    () =>
+      getBannerPhoto({
+        url: game.bannerUrl,
+        width: bannerWidth,
+        height: bannerHeight,
+      }),
+    [game.bannerUrl]
   );
 
-  const onUpdateAd = useCallback((payload: SupabaseRealtimePayload<IAd>) => {
+  const onInsertAd = useCallback(async (payload: RealtimePayload) => {
+    try {
+      const { data: user } = await supabase
+        .from("User")
+        .select("name")
+        .eq("id", payload.new.userId)
+        .throwOnError();
+
+      const newAd = {
+        ...payload.new,
+        user: user?.[0],
+      };
+      setGameAds((state) => [newAd, ...state]);
+    } catch (err) {
+      console.error(err);
+    }
+  }, []);
+
+  const onUpdateAd = useCallback((payload: RealtimePayload) => {
     setGameAds((state) => {
       const target = state.find((ad) => ad.id === payload.old.id);
       const editedAd = {
@@ -66,7 +66,7 @@ export default function Games({ game, ads }: GameProps) {
     });
   }, []);
 
-  const onDeleteAd = useCallback((payload: SupabaseRealtimePayload<IAd>) => {
+  const onDeleteAd = useCallback((payload: RealtimePayload) => {
     setGameAds((state) => {
       return state.filter((ad) => ad.id !== payload.old.id);
     });
@@ -148,10 +148,6 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
 
     if (!gameResponse.data || !gameResponse.data.length) {
       return {
-        redirect: {
-          destination: "/404",
-          permanent: false,
-        },
         notFound: true,
       };
     }
@@ -165,6 +161,9 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
     `
       )
       .eq("gameId", gameResponse.data[0].id)
+      .order("createdAt", {
+        ascending: false,
+      })
       .throwOnError();
 
     return {
@@ -177,10 +176,6 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
   } catch (err) {
     console.error(err);
     return {
-      redirect: {
-        destination: "/404",
-        permanent: false,
-      },
       notFound: true,
     };
   }

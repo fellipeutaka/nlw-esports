@@ -9,10 +9,12 @@ import { supabase } from "@lib/supabase";
 export function SignInDialog() {
   async function handleSignIn() {
     try {
-      const { user, session, error } = await supabase.auth.signIn({
+      const { error } = await supabase.auth.signIn({
         provider: "discord",
       });
-      console.log({ user, session, error });
+      if (error) {
+        throw error;
+      }
     } catch (err) {
       console.error(err);
     }
@@ -33,7 +35,6 @@ export function SignInDialog() {
               animationData={playingAnimation}
               loop
               className="w-full h-64"
-              onLoadedData={() => console.log("Carregou")}
             />
             <button
               className="w-full h-14 rounded-md px-2 gap-2 flex items-center justify-center bg-violet-500 hover:bg-violet-600 custom-outline focus-visible:outline-violet-500"

@@ -3,11 +3,15 @@ import { toast } from "react-toastify";
 import * as Dialog from "@radix-ui/react-dialog";
 import { CheckCircle, GameController } from "phosphor-react";
 
+import { useAuth } from "@hooks/useAuth";
+
 interface ConnectDialogProps {
   discord: string;
 }
 
 export function ConnectDialog({ discord }: ConnectDialogProps) {
+  const { user } = useAuth();
+
   function handleCopyDiscord() {
     try {
       navigator.clipboard.writeText(discord);
@@ -20,8 +24,12 @@ export function ConnectDialog({ discord }: ConnectDialogProps) {
 
   return (
     <Dialog.Root>
-      <Dialog.Trigger className="flex items-center justify-center mt-auto py-3 rounded-md gap-2 bg-violet-500 font-semibold custom-outline focus:outline-violet-500">
-        <GameController size={24} /> <span>Conectar</span>
+      <Dialog.Trigger
+        disabled={user?.user_metadata.name === discord}
+        className="flex items-center justify-center mt-auto py-3 rounded-md gap-2 bg-violet-500 font-semibold custom-outline focus:outline-violet-500 disabled:opacity-30 disabled:cursor-not-allowed"
+      >
+        <GameController size={24} />
+        Conectar
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/60 animate-fadeIn" />

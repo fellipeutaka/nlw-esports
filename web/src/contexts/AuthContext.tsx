@@ -19,10 +19,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   useEffect(() => {
     const session = supabase.auth.session();
-
-    if (session) {
-      setUser(session.user);
-    }
+    setUser(session?.user ?? null);
 
     const { data, error } = supabase.auth.onAuthStateChange(
       (event, session) => {
