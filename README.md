@@ -62,6 +62,9 @@ Find Your Duo is a web and mobile platform that helps gamers find a partner to p
 <h1 align="center">
     <img alt="Example" title="Example" src=".github/project.jpg" width="500px" />
 </h1>
+<h1 align="center">
+    <img alt="Supabase ERD Diagram" title="Supabase ERD Diagram" src=".github/erd.png" width="500px" />
+</h1>
 
 ## 🚀 Technologies
 
@@ -154,7 +157,7 @@ c079c06e-87c2-4bf5-b2a7-e5b4b76e20dd,Dead by Daylight,https://static-cdn.jtvnw.n
 
 From your command line:
 
-### Install Front-end and Back-end
+### Install Web App
 
 ```bash
 # Clone this repository
@@ -166,7 +169,7 @@ $ cd web
 # Install dependencies
 $ yarn
 
-# Create .env based on the .env.example file
+# Create .env.local based on the .env.example file
 
 # Start server
 $ yarn dev
